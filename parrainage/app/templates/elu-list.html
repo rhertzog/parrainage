@@ -6,6 +6,9 @@
 	<tr>
 	    <th>#</th>
 	    <th>Élu</th>
+	    {% if 'department' not in request.GET %}
+	    <th>Dép.</th>
+	    {% endif %}
 	    <th>Téléphone</th>
 	    {% if user.is_authenticated %}
 	    <th>Statut</th>
@@ -16,6 +19,9 @@
 	<tr>
 	    <td>{{ forloop.counter }}.</td>
 	    <td><a href="{{ elu.get_absolute_url }}">{{ elu }}</a></td>
+	    {% if 'department' not in request.GET %}
+	    <td>{{ elu.department }}</td>
+	    {% endif %}
 	    <td>{{ elu.public_phone }}</td>
 	    {% if user.is_authenticated %}
 	    <td>{{ elu.get_status_display }}</td>
