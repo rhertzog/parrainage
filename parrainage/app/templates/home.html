@@ -39,11 +39,30 @@
 	</form>
     </div>
     <p></p>
+    <h3>Mes élus à gérer</h3>
+    <table class="table table-sm table-striped">
+	<tr>
+	    <th>#</th>
+	    <th>Élu</th>
+	    <th>Statut</th>
+	    <th>Dernière mise à jour</th>
+	</tr>
+	{% for elu in my_elus %}
+	<tr>
+	    <td>{{ forloop.counter }}</td>
+	    <td><a href="{{ elu.get_absolute_url }}">{{ elu }}</a></td>
+	    <td>{{ elu.get_status_display }}</td>
+	    <td>{{ elu.last_updated }} (il y a {{ elu.last_updated|timesince }})</td>
+	</tr>
+	{% endfor %}
+    </table>
+
+    <p></p>
     <h3>Statistiques</h3>
     <p>{{ user_count }} bénévoles ont contacté {{ elus_contacted }} élus
     et ont obtenu {{ elus_accepted }} parrainages.</p>
     {% if user.is_authenticated %}
-    <h4>Département les plus actifs</h4>
+    <h4>Classement des départements</h4>
     <table class="table table-sm table-striped">
 	<tr>
 	    <th>#</th>
@@ -51,12 +70,33 @@
 	    <th>Parrainages</th>
 	    <th>Élus contactés</th>
 	</tr>
-	{% for dep in department_stats %}
+	{% for dep in classement_departments %}
 	<tr>
 	    <td>{{ forloop.counter }}</td>
+	    <td>{{ dep.department }}</td>
+	    <td>{{ dep.parrainages }}</td>
+	    <td>{{ dep.contacts }}</td>
 	</tr>
 	{% endfor %}
     </table>
+    <h4>Classement des utilisateurs</h4>
+    <table class="table table-sm table-striped">
+	<tr>
+	    <th>#</th>
+	    <th>Utilisateur</th>
+	    <th>Mises à jour effectuées</th>
+	    <th>Élus assignés</th>
+	</tr>
+	{% for benevole in classement_users %}
+	<tr>
+	    <td>{{ forloop.counter }}</td>
+	    <td>{{ benevole }}</td>
+	    <td>{{ benevole.count_notes }}</td>
+	    <td>{{ benevole.count_elus }}</td>
+	</tr>
+	{% endfor %}
+    </table>
+
     {% endif %}
 </div>
 {% endblock %}

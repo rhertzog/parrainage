@@ -1,7 +1,7 @@
 import logging
 
 from django.core.urlresolvers import reverse
-from django.db.models import Q
+from django.db.models import Q, Count, Max
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.views.generic import TemplateView, ListView, DetailView
 
@@ -19,8 +19,38 @@ class HomePageView(TemplateView):
         context['elus_contacted'] = Elu.objects.filter(
             status__gt=Elu.STATUS_NOTHING).count()
         context['elus_accepted'] = Elu.objects.filter(
-            status__gt=Elu.STATUS_ACCEPTED).count()
-        context['department_stats'] = []
+            status=Elu.STATUS_ACCEPTED).count()
+
+        if not self.request.user.is_authenticated():
+            return context
+
+        qs = Elu.objects.filter(status__gt=Elu.STATUS_NOTHING)
+        qs = qs.values_list('department', 'status')
+
+        stats = {}
+        for department, status in qs:
+            dep_stats = stats.setdefault(department, {
+                'department': department,
+                'parrainages': 0,
+                'contacts': 0
+            })
+            dep_stats['contacts'] += 1
+            if status == Elu.STATUS_ACCEPTED:
+                dep_stats['parrainages'] += 1
+        result = list(stats.values())
+        result.sort(key=lambda x: (x['parrainages'], x['contacts']),
+                    reverse=True)
+        context['classement_departments'] = result
+
+        context['classement_users'] = User.objects.annotate(
+            count_elus=Count('elu', distinct=True)).annotate(
+            count_notes=Count('notes', distinct=True)).order_by(
+            '-count_notes', '-count_elus')
+
+        context['my_elus'] = self.request.user.elu_set.filter(
+            status__lt=Elu.STATUS_REFUSED).annotate(
+                last_updated=Max('notes__timestamp')).order_by(
+                    'status', 'last_updated')
 
         return context
 
