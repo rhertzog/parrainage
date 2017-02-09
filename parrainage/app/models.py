@@ -54,6 +54,7 @@ class Elu(models.Model):
     department = models.CharField(max_length=3, blank=True, db_index=True)
     city = models.CharField(max_length=255, blank=True, db_index=True)
     city_size = models.IntegerField(blank=True, null=True)
+    city_code = models.CharField(max_length=10, blank=True)
 
     nuance_politique = models.CharField(max_length=5, blank=True, db_index=True)
 
