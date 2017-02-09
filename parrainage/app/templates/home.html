@@ -39,6 +39,7 @@
 	</form>
     </div>
     <p></p>
+    {% if user.is_authenticated %}
     <h3>Mes élus à gérer</h3>
     <table class="table table-sm table-striped">
 	<tr>
@@ -56,8 +57,8 @@
 	</tr>
 	{% endfor %}
     </table>
-
     <p></p>
+    {% endif %}
     <h3>Statistiques</h3>
     <p>{{ user_count }} bénévoles ont contacté {{ elus_contacted }} élus
     et ont obtenu {{ elus_accepted }} parrainages.</p>
