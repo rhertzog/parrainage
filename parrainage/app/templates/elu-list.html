@@ -4,6 +4,7 @@
     <h2>Élus</h2>
     <table class="table table-bordered table-hover table-sm">
 	<tr>
+	    <th>#</th>
 	    <th>Élu</th>
 	    <th>Téléphone</th>
 	    {% if user.is_authenticated %}
@@ -13,6 +14,7 @@
 	</tr>
         {% for elu in object_list %}
 	<tr>
+	    <td>{{ forloop.counter }}.</td>
 	    <td><a href="{{ elu.get_absolute_url }}">{{ elu }}</a></td>
 	    <td>{{ elu.public_phone }}</td>
 	    {% if user.is_authenticated %}

@@ -2,10 +2,61 @@
 {% block page-content %}
 <div class="introduction">
     <div class="container">
-        <p class="lead m-b-0">Ce service permet de coordonner la recherche des parrainages pour Charlotte Marchandise.</p>
+        <p class="lead m-b-4">Ce service permet de coordonner la recherche des parrainages pour Charlotte Marchandise.</p>
     </div>
 </div>
 <div class="container">
-...
+    <h3>Rechercher un élu</h3>
+    <div>
+	<form action="{% url 'elu-list' %}" method="GET" class="form-inline">
+	    <input type="text" class="form-control" name="search" placeholder="Nom ou ville de l'élu">
+	    <button type="submit" class="btn btn-primary">Rechercher</button>
+	</form>
+    </div>
+    <p></p>
+    <h3>Consulter les élus d'un département</h3>
+    <div>
+	<form action="{% url 'elu-list' %}" method="GET" class="form-inline">
+	    <div class="form-group">
+		<label for="department">Département:</label>
+		<select class="form-control" name="department" id="department">
+		    {% for d in departements %}
+		    <option>{{ d }}</option>
+		    {% endfor %}
+		</select>
+	    </div>
+	    <div class="form-group">
+		<label for="sort">Trier par:</label>
+		<select class="form-control" name="sort" id="sort">
+		    <option value="priority">Priorité</option>
+		    <option value="">Ordre alphabétique</option>
+		    {% if user.is_authenticated %}
+		    <option value="status">Statut</option>
+		    {% endif %}
+		</select>
+	    </div>
+	    <button type="submit" class="btn btn-primary">Voir les élus</button>
+	</form>
+    </div>
+    <p></p>
+    <h3>Statistiques</h3>
+    <p>{{ user_count }} bénévoles ont contacté {{ elus_contacted }} élus
+    et ont obtenu {{ elus_accepted }} parrainages.</p>
+    {% if user.is_authenticated %}
+    <h4>Département les plus actifs</h4>
+    <table class="table table-sm table-striped">
+	<tr>
+	    <th>#</th>
+	    <th>Département</th>
+	    <th>Parrainages</th>
+	    <th>Élus contactés</th>
+	</tr>
+	{% for dep in department_stats %}
+	<tr>
+	    <td>{{ forloop.counter }}</td>
+	</tr>
+	{% endfor %}
+    </table>
+    {% endif %}
 </div>
 {% endblock %}

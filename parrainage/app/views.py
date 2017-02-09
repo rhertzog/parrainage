@@ -5,7 +5,7 @@ from django.db.models import Q
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.views.generic import TemplateView, ListView, DetailView
 
-from parrainage.app.models import Elu
+from parrainage.app.models import Elu, User
 
 
 class HomePageView(TemplateView):
@@ -13,6 +13,15 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
+        context['departements'] = Elu.objects.only('department').values_list(
+            'department', flat=True).distinct().order_by('department')
+        context['user_count'] = User.objects.count()
+        context['elus_contacted'] = Elu.objects.filter(
+            status__gt=Elu.STATUS_NOTHING).count()
+        context['elus_accepted'] = Elu.objects.filter(
+            status__gt=Elu.STATUS_ACCEPTED).count()
+        context['department_stats'] = []
+
         return context
 
 
@@ -53,7 +62,6 @@ class EluListView(ListView):
         else:
             qs = qs.order_by('family_name', 'first_name')
         return qs
-
 
 
 class EluDetailView(DetailView):
