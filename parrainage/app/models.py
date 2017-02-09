@@ -61,6 +61,18 @@ class Elu(models.Model):
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL,
                                     blank=True, null=True)
 
+    def __str__(self):
+        name = '{} {}'.format(self.first_name, self.family_name)
+        if self.role == 'M':
+            name += ' (Maire de {})'.format(self.city)
+        elif self.role == 'CD':
+            name += ' (Conseiller départemental {})'.format(self.department)
+        elif self.role == 'CR':
+            name += ' (Conseiller régional)'
+        elif self.role == 'D':
+            name += ' (Député)'
+        return name
+
 class Note(models.Model):
     elu = models.ForeignKey(Elu, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
