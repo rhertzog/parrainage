@@ -27,6 +27,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+# Email related settings
+ADMINS = (
+    ('Raphael Hertzog', 'raphael@ouaza.com'),
+)
+DEFAULT_FROM_EMAIL = 'raphael+parrainage@ouaza.com'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # Application definition
 
@@ -88,9 +94,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Paris'
 
 USE_I18N = True
 
@@ -106,6 +112,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+STATIC_ROOT = '/srv/parrainage/static'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'

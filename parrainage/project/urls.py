@@ -16,7 +16,12 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from parrainage.app.views import HomePageView, EluListView, EluDetailView
+
 urlpatterns = [
+    url(r'^$', HomePageView.as_view(), name='home'),
+    url(r'^elu/$', EluListView.as_view(), name='elu-list'),
+    url(r'^elu/(?P<pk>[0-9]+)/$', EluDetailView.as_view(), name='elu-detail'),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('django.contrib.auth.urls')),
 ]

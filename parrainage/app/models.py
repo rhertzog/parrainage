@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 # Create your models here.
 
@@ -73,8 +74,14 @@ class Elu(models.Model):
             name += ' (Député)'
         return name
 
+    def get_absolute_url(self):
+        return reverse('elu-detail', args=[str(self.id)])
+
+
 class Note(models.Model):
-    elu = models.ForeignKey(Elu, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    elu = models.ForeignKey(Elu, on_delete=models.CASCADE,
+                            related_name='notes')
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True,
+                             related_name='notes')
     timestamp = models.DateTimeField(auto_now_add=True)
     note = models.TextField()

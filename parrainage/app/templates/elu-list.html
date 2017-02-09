@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Liste d'élus{% endblock %}
+{% block content %}
+    <h2>Élus</h2>
+    <table class="table table-bordered table-hover table-sm">
+	<tr>
+	    <th>Élu</th>
+	    <th>Téléphone</th>
+	    {% if user.is_authenticated %}
+	    <th>Statut</th>
+	    <th>Assigné à</th>
+	    {% endif %}
+	</tr>
+        {% for elu in object_list %}
+	<tr>
+	    <td><a href="{{ elu.get_absolute_url }}">{{ elu }}</a></td>
+	    <td>{{ elu.public_phone }}</td>
+	    {% if user.is_authenticated %}
+	    <td>{{ elu.get_status_display }}</td>
+	    <td>{{ elu.assigned_to|default:"" }}</td>
+	    {% endif %}
+	</tr>
+        {% endfor %}
+    </table>
+{% endblock %}

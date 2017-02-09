@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}{{ object }}{% endblock %}
+{% block page-header-title %}
+<h1>{{ object.first_name }} {{ object.family_name }}</h1>
+{% endblock %}
+{% block page-content %}
+<div class="container-fluid">
+    <div class="col-xs-12 col-md-4">
+	<h2>Infos de contact</h2>
+	<p><strong>Email:</strong> {{ object.public_email|urlize }}<br/>
+	<strong>Téléphone:</strong> {{ object.public_phone }}<br/>
+	<strong>Site web:</strong> {{ object.public_website|urlize }}</p>
+	{% if user.is_authenticated %}
+	<p><strong>Email privé:</strong> {{ object.private_email|urlize }}<br/>
+	<strong>Téléphone privé:</strong> {{ object.private_phone }}</p>
+	{% endif %}
+    </div>
+    <div class="col-xs-12 col-md-4">
+	<h2>Autres infos</h2>
+	<p><strong>Date de naissance:</strong> {{ object.birthdate }} ({{ object.birthdate|timesince }})<br/>
+	<strong>Couleur politique de sa liste:</strong> {{ object.nuance_politique|default:"inconnue" }}<br/>
+	<strong>Fonction:</strong> {{ object.get_role_display }}<br/>
+	<strong>Département:</strong> {{ object.department }}<br/>
+	{% if object.city %}
+	<strong>Commune:</strong> {{ object.city }}<br/>
+	<strong>Population commune:</strong> {{ object.city_size }}
+	{% endif %}
+	</p>
+    </div>
+    <div class="col-xs-12 col-md-4">
+	<h2>Statut</h2>
+	<p><strong>Statut:</strong> {{ object.get_status_display }}<br/>
+	<strong>Assigné à:</strong> {{ object.assigned_to|default:"personne" }}</p>
+	{% if user.is_authenticated %}
+	    {% if object.assigned_to == user %}
+	    <form method="POST">
+		{% csrf_token %} 
+		<input type="hidden" name="action" value="unassign"/>
+		<button type="submit" class="btn btn-primary">Supprimer l'assignation</button>
+	    </form>
+	    {% else %}
+	    <form method="POST">
+		{% csrf_token %} 
+		<input type="hidden" name="action" value="assign"/>
+		<button type="submit" class="btn btn-primary">M'assigner cet élu</button>
+	    </form>
+	    {% endif %}
+	{% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="col-xs-12">
+	<h2>Historique</h2>
+	<table class="table table-striped">
+	    <tr>
+		<th>Horodatage</th>
+		<th>Qui</th>
+		<th>Contenu de la note</th>
+	    </tr>
+	    {% for note in object.notes.all %}
+	    <tr>
+		<td>{{ note.timestamp }}<br/>(il y a {{ note.timestamp|timesince }})</td>
+		<td>{{ note.user }}</td>
+		<td>{{ note.note|linebreaksbr }}</td>
+	    </tr>
+	    {% endfor %}
+	</table>
+    </div>
+    <div class="col-xs-12">
+	<h3>Ajout d'une note et mise à jour du statut</h3>
+	<form method="POST">
+	    <div class="form-group">
+		<label for="newStatus">Nouveau statut:</label>
+		<select class="form-control" id="newStatus" name="status">
+		    <option value="" selected>Statut inchangé</option>
+		    {% for value, text in object.STATUS_CHOICES %}
+		    <option value="{{ value }}">{{ text }}</option>
+		    {% endfor %}
+		</select>
+	    </div>
+	    <div class="form-group">
+		<label for="newNote">Nouvelle note:</label>
+		<textarea class="form-control" id="newNote" name="note" rows="3"></textarea>
+	    </div>
+	    {% csrf_token %} 
+	    <input type="hidden" name="action" value="add_note"/>
+	    <button type="submit" class="btn btn-primary">Ajouter la note</button>
+	</form>
+    </div>
+    <div class="col-xs-12">
+	<p></p>
+	<h3>Mise à jour des coordonnées privées</h3>
+	<form method="POST" class="form-inline">
+	    <div class="form-group">
+		<label for="newEmail">Email privé:</label>
+		<input type="text" class="form-control" id="newEmail" name="private_email" value="{{ object.private_email }}">
+	    </div>
+	    <div class="form-group">
+		<label for="newPhone">Téléphone privé:</label>
+		<input type="text" class="form-control" id="newPhone" name="private_phone" value="{{ object.private_phone }}">
+	    </div>
+	    {% csrf_token %} 
+	    <input type="hidden" name="action" value="update_contact"/>
+	    <button type="submit" class="btn btn-primary">Mettre à jour les coordonnées</button>
+	</form>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}
