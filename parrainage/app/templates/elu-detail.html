@@ -27,28 +27,26 @@
 	{% endif %}
 	</p>
     </div>
+    {% if user.is_authenticated %}
     <div class="col-xs-12 col-md-4">
 	<h2>Statut</h2>
 	<p><strong>Statut:</strong> {{ object.get_status_display }}<br/>
 	<strong>Assigné à:</strong> {{ object.assigned_to|default:"personne" }}</p>
-	{% if user.is_authenticated %}
-	    {% if object.assigned_to == user %}
-	    <form method="POST">
-		{% csrf_token %} 
-		<input type="hidden" name="action" value="unassign"/>
-		<button type="submit" class="btn btn-primary">Supprimer l'assignation</button>
-	    </form>
-	    {% else %}
-	    <form method="POST">
-		{% csrf_token %} 
-		<input type="hidden" name="action" value="assign"/>
-		<button type="submit" class="btn btn-primary">M'assigner cet élu</button>
-	    </form>
-	    {% endif %}
+	{% if object.assigned_to == user %}
+	<form method="POST">
+	    {% csrf_token %} 
+	    <input type="hidden" name="action" value="unassign"/>
+	    <button type="submit" class="btn btn-primary">Supprimer l'assignation</button>
+	</form>
+	{% else %}
+	<form method="POST">
+	    {% csrf_token %} 
+	    <input type="hidden" name="action" value="assign"/>
+	    <button type="submit" class="btn btn-primary">M'assigner cet élu</button>
+	</form>
 	{% endif %}
     </div>
 
-    {% if user.is_authenticated %}
     <div class="col-xs-12">
 	<h2>Historique</h2>
 	<table class="table table-striped">
