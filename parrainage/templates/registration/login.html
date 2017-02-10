@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
 {% block content %}
+<div class="text-xs-center"><h2>Se connecter</h2></div>
 
 {% if form.errors %}
 <p>Your username and password didn't match. Please try again.</p>
@@ -17,18 +17,16 @@
 
 <form method="post" action="{% url 'login' %}">
 {% csrf_token %}
-<table>
-<tr>
-    <td>Identifiant:</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>Mot de passe:</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
+<div class="form-group">
+    <label for="id_username">Identifiant:</label>
+    <input id="id_username" class="form-control" maxlength="254" name="username" type="text" />
+</div>
+<div class="form-group">
+    <label for="id_password">Mot de passe:</label>
+    <input id="id_password" class="form-control" name="password" type="password" />
+</div>
 
-<input type="submit" value="Se connecter" />
+<input type="submit" class="btn btn-primary" value="Se connecter" />
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
 
