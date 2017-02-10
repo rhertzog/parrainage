@@ -18,10 +18,11 @@
 		<div class="row">
 		<div class="col-xs-12 text-xs-center">
 		    <div class="pull-xs-left">
-			<a href="/">Accueil</a>
+			<a href="/"><img src="{% static 'img/logo-small.png' %}" alt="Charlotte Marchandise-Franquet, la voie citoyenne"/></a>
 		    </div>
 		    <div class="pull-xs-right">
 		    {% block page-header-right %}
+		    <a href="/">Accueil</a> |
 		    {% include 'user-widget.html' %}
 		    {% endblock %}
 		    </div>
