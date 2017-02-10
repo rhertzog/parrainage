@@ -1,8 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.utils.html import format_html
 
-# Create your models here.
 
 class Elu(models.Model):
 
@@ -77,6 +77,11 @@ class Elu(models.Model):
     def get_absolute_url(self):
         return reverse('elu-detail', args=[str(self.id)])
 
+    def link(self):
+        return format_html('<a href="{}">{}</a>',
+                           self.get_absolute_url(),
+                           self.__str__())
+    link.allow_tags = True
 
 class Note(models.Model):
     elu = models.ForeignKey(Elu, on_delete=models.CASCADE,
