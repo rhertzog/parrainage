@@ -1,5 +1,5 @@
 {% if user.is_authenticated %}
-    <span><a id="account-logout" href="{% url 'logout' %}?next={{ logout_redirect }}">Se déconnecter</a></span>
+    <span><a id="account-logout" href="{% url 'logout' %}?next=/">Se déconnecter</a></span>
 {% else %}
     <span><a id="account-login" href="{% url 'login' %}">Se connecter</a></span>
 {% endif %}
