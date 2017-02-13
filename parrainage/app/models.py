@@ -31,6 +31,8 @@ class Elu(models.Model):
         ('CD', 'Conseiller départemental'),
         ('CR', 'Conseiller régional'),
         ('D', 'Député'),
+        ('S', 'Sénateur'),
+        ('DE', 'Député européen'),
     )
 
     first_name = models.CharField(max_length=255, db_index=True)
@@ -72,6 +74,10 @@ class Elu(models.Model):
             name += ' (Conseiller régional)'
         elif self.role == 'D':
             name += ' (Député)'
+        elif self.role == 'S':
+            name += ' (Sénateur)'
+        elif self.role == 'DE':
+            name += ' (Député européen)'
         return name
 
     def get_absolute_url(self):
