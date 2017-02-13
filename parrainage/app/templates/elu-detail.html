@@ -27,9 +27,9 @@
 	{% endif %}
 	</p>
     </div>
-    {% if user.is_authenticated %}
     <div class="col-xs-12 col-md-4">
 	<h2>Statut</h2>
+	{% if user.is_authenticated %}
 	<p><strong>Statut:</strong> {{ object.get_status_display }}<br/>
 	<strong>Assigné à:</strong> {{ object.assigned_to|default:"personne" }}</p>
 	{% if object.assigned_to == user %}
@@ -45,8 +45,12 @@
 	    <button type="submit" class="btn btn-primary">M'assigner cet élu</button>
 	</form>
 	{% endif %}
+	{% else %}
+	<p><strong>Statut:</strong> {{ object.get_public_status_display }}</p>
+	{% endif %}
     </div>
 
+    {% if user.is_authenticated %}
     <div class="col-xs-12">
 	<h2>Historique</h2>
 	<table class="table table-striped">

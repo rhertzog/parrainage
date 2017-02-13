@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.utils.html import format_html
+from django.utils.functional import cached_property
 
 
 class Elu(models.Model):
@@ -34,6 +35,12 @@ class Elu(models.Model):
         ('S', 'Sénateur'),
         ('DE', 'Député européen'),
     )
+
+    PUBLIC_STATUS = {
+        'nothing-done': 'Rien n\'a été fait',
+        'in-progress': 'En cours',
+        'done': 'Terminé',
+    }
 
     first_name = models.CharField(max_length=255, db_index=True)
     family_name = models.CharField(max_length=255, db_index=True)
@@ -88,6 +95,18 @@ class Elu(models.Model):
                            self.get_absolute_url(),
                            self.__str__())
     link.allow_tags = True
+
+    @cached_property
+    def public_status(self):
+        if self.status >= Elu.STATUS_REFUSED:
+            return 'done'
+        if self.assigned_to or self.status != Elu.STATUS_NOTHING:
+            return 'in-progress'
+        return 'nothing-done'
+
+    def get_public_status_display(self):
+        return Elu.PUBLIC_STATUS.get(self.public_status, 'Inconnu')
+
 
 class Note(models.Model):
     elu = models.ForeignKey(Elu, on_delete=models.CASCADE,
