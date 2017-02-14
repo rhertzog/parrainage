@@ -9,7 +9,12 @@
 	<h2>Infos de contact</h2>
 	<p><strong>Email:</strong> {{ object.public_email|urlize }}<br/>
 	<strong>Téléphone:</strong> {{ object.public_phone }}<br/>
-	<strong>Site web:</strong> {{ object.public_website|urlize }}</p>
+	<strong>Site web:</strong> {{ object.public_website|urlize }}<br/>
+	{% if object.city %}
+	<strong>Adresse:</strong> {{ object.city_address|linebreaksbr }}
+	{{ object.city_zipcode }} {{ object.city }}<br/>
+	{% endif %}
+	</p>
 	{% if user.is_authenticated %}
 	<p><strong>Email privé:</strong> {{ object.private_email|urlize }}<br/>
 	<strong>Téléphone privé:</strong> {{ object.private_phone }}</p>
@@ -20,11 +25,11 @@
 	<p><strong>Date de naissance:</strong> {{ object.birthdate }} ({{ object.birthdate|timesince }})<br/>
 	<strong>Couleur politique de sa liste:</strong> {{ object.nuance_politique|default:"inconnue" }}<br/>
 	<strong>Fonction:</strong> {{ object.get_role_display }}<br/>
-	<strong>Département:</strong> {{ object.department }}<br/>
 	{% if object.city %}
 	<strong>Commune:</strong> {{ object.city }}<br/>
-	<strong>Population commune:</strong> {{ object.city_size }}
+	<strong>Population commune:</strong> {{ object.city_size }}<br/>
 	{% endif %}
+	<strong>Département:</strong> {{ object.department }}
 	</p>
     </div>
     <div class="col-xs-12 col-md-4">
