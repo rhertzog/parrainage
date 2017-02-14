@@ -65,6 +65,10 @@ class Elu(models.Model):
     city = models.CharField(max_length=255, blank=True, db_index=True)
     city_size = models.IntegerField(blank=True, null=True)
     city_code = models.CharField(max_length=10, blank=True)
+    city_address = models.TextField(blank=True)
+    city_zipcode = models.CharField(max_length=10, blank=True)
+    city_latitude = models.CharField(max_length=20, blank=True)
+    city_longitude = models.CharField(max_length=20, blank=True)
 
     nuance_politique = models.CharField(max_length=5, blank=True, db_index=True)
 
