@@ -1,9 +1,10 @@
+import csv
 import logging
 
 from django.core.urlresolvers import reverse
 from django.db.models import Q, Count, Max
-from django.http import HttpResponseForbidden, HttpResponseRedirect
-from django.views.generic import TemplateView, ListView, DetailView
+from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
+from django.views.generic import TemplateView, ListView, DetailView, View
 
 from parrainage.app.models import Elu, User
 
@@ -106,9 +107,6 @@ class EluDetailView(DetailView):
         action = request.POST.get('action')
         note = ''
 
-        log = logging.getLogger()
-        log.error('action = {}'.format(action))
-        log.error('object = {}'.format(self.object))
         if action == 'assign':
             if self.object.assigned_to != request.user:
                 note = 'Nouvelle assignation: {} → {}'.format(
@@ -147,3 +145,36 @@ class EluDetailView(DetailView):
             self.object.notes.create(user=request.user, note=note)
         return HttpResponseRedirect(self.object.get_absolute_url())
 
+
+class EluCSVForMap(View):
+
+    def get(self, request, *args, **kwargs):
+        qs = Elu.objects.exclude(city_latitude='').exclude(city_longitude='')
+        status = request.GET.get('status', '')
+        if status == 'nothing-done':
+            qs = qs.exclude(status__gte=Elu.STATUS_REFUSED).filter(
+                Q(status=Elu.STATUS_NOTHING) & Q(assigned_to__isnull=True))
+        elif status == 'done':
+            qs = qs.filter(status__gte=Elu.STATUS_REFUSED)
+        elif status == 'in-progress':
+            qs = qs.exclude(status__gte=Elu.STATUS_REFUSED).exclude(
+                Q(status=Elu.STATUS_NOTHING) & Q(assigned_to__isnull=True))
+
+        response = HttpResponse(content_type='text/plain', charset='utf-8')
+        csvwriter = csv.writer(response)
+        csvwriter.writerow([
+            'latitude', 'longitude', 'name', 'phone', 'email',
+            'status', 'url'
+        ])
+        for elu in qs:
+            csvwriter.writerow([
+                elu.city_latitude,
+                elu.city_longitude,
+                str(elu),
+                elu.public_phone,
+                elu.public_email,
+                elu.get_public_status_display(),
+                request.build_absolute_uri(elu.get_absolute_url())
+            ])
+
+        return response
