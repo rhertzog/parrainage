@@ -159,6 +159,15 @@ class EluCSVForMap(View):
         elif status == 'in-progress':
             qs = qs.exclude(status__gte=Elu.STATUS_REFUSED).exclude(
                 Q(status=Elu.STATUS_NOTHING) & Q(assigned_to__isnull=True))
+        department = request.GET.get('department')
+        if department:
+            qs = qs.filter(department=department)
+        try:
+            limit = request.GET.get('limit')
+            if limit:
+                qs = qs[:int(limit)]
+        except:
+            pass
 
         response = HttpResponse(content_type='text/plain', charset='utf-8')
         csvwriter = csv.writer(response)
