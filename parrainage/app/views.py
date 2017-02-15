@@ -164,7 +164,7 @@ class EluCSVForMap(View):
             deplist = department.split(",")
             qs = qs.filter(department__in=deplist)
         try:
-            limit = request.GET.get('limit', None if department else 10000)
+            limit = request.GET.get('limit')
             if limit:
                 qs = qs[:int(limit)]
         except:
