@@ -24,12 +24,14 @@
 	<h2>Autres infos</h2>
 	<p><strong>Date de naissance:</strong> {{ object.birthdate }} ({{ object.birthdate|timesince }})<br/>
 	<strong>Couleur politique de sa liste:</strong> {{ object.nuance_politique|default:"inconnue" }}<br/>
+        <strong>Commentaires:</strong> {{ object.comment }}<br/>
 	<strong>Fonction:</strong> {{ object.get_role_display }}<br/>
 	{% if object.city %}
 	<strong>Commune:</strong> {{ object.city }}<br/>
 	<strong>Population commune:</strong> {{ object.city_size }}<br/>
+        <strong>Horaires mairie:</strong> <a target="_blank" href="https://lannuaire.service-public.fr/recherche?whoWhat=mairie&where={{ object.city_zipcode|urlencode }}{{ " "|urlencode }}{{ object.city|urlencode }}">ouvrir</a><br/>
 	{% endif %}
-	<strong>Département:</strong> {{ object.department }}
+	<strong>Département:</strong> <a href="{% url 'elu-list' %}?department={{ object.department }}&sort=priority">{{ object.department }}</a>
 	</p>
     </div>
     <div class="col-xs-12 col-md-4">
