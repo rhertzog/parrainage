@@ -1,4 +1,6 @@
 {% if user.is_authenticated %}
+    {% include 'userlink.html' with u=user text='Mon profil' %}
+    |
     <span><a id="account-logout" href="{% url 'logout' %}?next=/">Se déconnecter</a></span>
 {% else %}
     <span><a id="account-login" href="{% url 'login' %}">Se connecter</a></span>

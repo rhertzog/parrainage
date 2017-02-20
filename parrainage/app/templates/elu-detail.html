@@ -38,7 +38,7 @@
 	<h2>Statut</h2>
 	{% if user.is_authenticated %}
 	<p><strong>Statut:</strong> {{ object.get_status_display }}<br/>
-	<strong>Assigné à:</strong> {{ object.assigned_to|default:"personne" }}</p>
+	<strong>Assigné à:</strong> {% include 'userlink.html' with u=object.assigned_to %}</p>
 	<p>
 	{% if object.assigned_to == user %}
 	<form method="POST">
@@ -77,7 +77,7 @@
 	    {% for note in object.notes.all %}
 	    <tr>
 		<td>{{ note.timestamp }}<br/>(il y a {{ note.timestamp|timesince }})</td>
-		<td>{{ note.user }}</td>
+		<td>{% include 'userlink.html' with u=note.user %}</td>
 		<td>{{ note.note|linebreaksbr }}</td>
 	    </tr>
 	    {% endfor %}

@@ -1,0 +1,5 @@
+{% if u %}
+<a href="{% url 'user-detail' username=u.username %}" title="{{ u.get_full_name }}">{{ text|default:u.username }}</a>
+{% else %}
+{{ default }}
+{% endif %}

@@ -98,7 +98,7 @@
 	{% for benevole in classement_users %}
 	<tr>
 	    <td>{{ forloop.counter }}</td>
-	    <td>{{ benevole }}</td>
+	    <td>{% include 'userlink.html' with u=benevole %}</td>
 	    <td>{{ benevole.count_notes }}</td>
 	    <td>{{ benevole.count_elus }}</td>
 	</tr>
