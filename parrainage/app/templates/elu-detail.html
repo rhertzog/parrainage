@@ -37,6 +37,7 @@
 	{% if user.is_authenticated %}
 	<p><strong>Statut:</strong> {{ object.get_status_display }}<br/>
 	<strong>Assigné à:</strong> {{ object.assigned_to|default:"personne" }}</p>
+	<p>
 	{% if object.assigned_to == user %}
 	<form method="POST">
 	    {% csrf_token %} 
@@ -50,8 +51,15 @@
 	    <button type="submit" class="btn btn-primary">M'assigner cet élu</button>
 	</form>
 	{% endif %}
+	</p>
 	{% else %}
 	<p><strong>Statut:</strong> {{ object.get_public_status_display }}</p>
+	{% endif %}
+	{% if perms.app.can_change_elu %}
+	<p>
+	<a href="/admin/app/elu/{{ object.id }}/">Page de l'élu sur
+	    l'interface d'administration</a><br/>
+	</p>
 	{% endif %}
     </div>
 
