@@ -119,3 +119,11 @@ class Note(models.Model):
                              related_name='notes')
     timestamp = models.DateTimeField(auto_now_add=True)
     note = models.TextField()
+
+
+class UserSettings(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE,
+                                related_name='settings')
+    phone = models.CharField(max_length=255, blank=True)
+    city = models.CharField(max_length=255, blank=True)
+    department = models.CharField(max_length=3, blank=True, db_index=True)
