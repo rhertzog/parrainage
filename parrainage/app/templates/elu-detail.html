@@ -8,7 +8,7 @@
     <div class="col-xs-12 col-md-4">
 	<h2>Infos de contact</h2>
 	<p><strong>Email:</strong> {{ object.public_email|urlize }}<br/>
-	<strong>Téléphone:</strong> {{ object.public_phone }}<br/>
+	<strong>Téléphone:</strong> <a href="tel:{{ object.public_phone }}">{{ object.public_phone }}</a><br/>
 	<strong>Site web:</strong> {{ object.public_website|urlize }}<br/>
 	{% if object.city %}
 	<strong>Adresse:</strong> {{ object.city_address|linebreaksbr }}
@@ -17,7 +17,7 @@
 	</p>
 	{% if user.is_authenticated %}
 	<p><strong>Email privé:</strong> {{ object.private_email|urlize }}<br/>
-	<strong>Téléphone privé:</strong> {{ object.private_phone }}</p>
+	<strong>Téléphone privé:</strong> <a href="tel:{{ object.private_phone }}">{{ object.private_phone }}</a></p>
 	{% endif %}
     </div>
     <div class="col-xs-12 col-md-4">
