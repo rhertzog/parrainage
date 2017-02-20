@@ -6,7 +6,21 @@ from django.db.models import Q, Count, Max
 from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
 from django.views.generic import TemplateView, ListView, DetailView, View
 
-from parrainage.app.models import Elu, User
+from parrainage.app.models import Elu, User, UserSettings
+
+
+def get_assigned_elus(user):
+    return user.elu_set.filter(status__lt=Elu.STATUS_REFUSED).annotate(
+        last_updated=Max('notes__timestamp')).order_by('status', 'last_updated')
+
+
+def get_department_list(request):
+    result = list(Elu.objects.only('department').values_list(
+            'department', flat=True).distinct().order_by('department'))
+    if request.user.is_authenticated() and hasattr(request.user, 'settings') \
+            and request.user.settings.department:
+        result.insert(0, request.user.settings.department)
+    return result
 
 
 class HomePageView(TemplateView):
@@ -14,8 +28,7 @@ class HomePageView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomePageView, self).get_context_data(**kwargs)
-        context['departements'] = Elu.objects.only('department').values_list(
-            'department', flat=True).distinct().order_by('department')
+        context['departements'] = get_department_list(self.request)
         context['user_count'] = User.objects.count()
         context['elus_contacted'] = Elu.objects.filter(
             status__gt=Elu.STATUS_NOTHING).count()
@@ -48,10 +61,7 @@ class HomePageView(TemplateView):
             count_notes=Count('notes', distinct=True)).order_by(
             '-count_notes', '-count_elus')
 
-        context['my_elus'] = self.request.user.elu_set.filter(
-            status__lt=Elu.STATUS_REFUSED).annotate(
-                last_updated=Max('notes__timestamp')).order_by(
-                    'status', 'last_updated')
+        context['my_elus'] = get_assigned_elus(self.request.user)
 
         return context
 
@@ -188,3 +198,37 @@ class EluCSVForMap(View):
             ])
 
         return response
+
+
+class UserDetailView(DetailView):
+    queryset = User.objects.all()
+    template_name = 'user-detail.html'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserDetailView, self).get_context_data(**kwargs)
+        del context['user']  # Avoid override of authenticated user
+        if self.request.user.is_authenticated():
+            context['assigned_elus'] = get_assigned_elus(self.get_object())
+            context['departements'] = get_department_list(self.request)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden()
+
+        self.object = self.get_object()
+        action = request.POST.get('action')
+
+        if action == 'update_profile':
+            settings, _ = UserSettings.objects.get_or_create(
+                user=self.request.user)
+            settings.phone = request.POST.get('phone', '')
+            settings.department = request.POST.get('department', '')
+            settings.city = request.POST.get('city', '')
+            settings.save()
+
+        return HttpResponseRedirect(
+            reverse('user-detail', args=[self.request.user.username]))
+

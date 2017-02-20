@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% block title %}Utilisateur {{ object.username }}{% endblock %}
+{% block page-header-title %}
+<h1>Utilisateur {{ object.username }}</h1>
+{% endblock %}
+{% block page-content %}
+{% if user.is_authenticated %}
+<div class="container-fluid">
+    <div class="col-xs-12">
+	<h2>Infos de contact</h2>
+	<p>
+	<strong>Nom complet:</strong> {{ object.get_full_name }}<br/>
+	<strong>Email:</strong> {{ object.email|urlize }}<br/>
+	<strong>Téléphone:</strong> <a href="tel:{{ object.settings.phone }}">{{ object.settings.phone }}</a><br/>
+
+	<strong>Ville:</strong> {{ object.settings.city }}<br/>
+	<strong>Département:</strong> {{ object.settings.department }}
+	</p>
+    </div>
+    {% if object.id == user.id %}
+    <div class="col-xs-12">
+	<h2>Mise à jour de mon profil</h2>
+        <form action="{% url 'user-detail' username=object.username %}" method="POST">
+            <div class="form-group">
+                <label for="sort">Téléphone:</label>
+                <input type="text" class="form-control" name="phone" id="phone" value="{{ object.settings.phone }}"/>
+            </div>
+            <div class="form-group">
+                <label for="sort">Ville:</label>
+                <input type="text" class="form-control" name="city" id="city" value="{{ object.settings.city }}"/>
+            </div>
+            <div class="form-group">
+                <label for="department">Département:</label>
+                <select class="form-control" name="department" id="department">
+                    {% for d in departements %}
+                    <option>{{ d }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            {% csrf_token %} 
+            <input type="hidden" name="action" value="update_profile"/>
+            <button type="submit" class="btn btn-primary">Mettre à jour mon profil</button>
+        </form>
+	<p></p>
+    </div>
+    {% endif %}
+    <div class="col-xs-12">
+	<h2>Élus assignés</h2>
+	<table class="table table-sm table-striped">
+        <tr>
+            <th>#</th>
+            <th>Élu</th>
+            <th>Statut</th>
+            <th>Dernière mise à jour</th>
+        </tr>
+	{% for elu in assigned_elus %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="{{ elu.get_absolute_url }}">{{ elu }}</a></td>
+            <td>{{ elu.get_status_display }}</td>
+            <td>{{ elu.last_updated }} (il y a {{ elu.last_updated|timesince }})</td>
+        </tr>
+        {% endfor %}
+    	</table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
