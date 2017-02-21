@@ -36,6 +36,19 @@
         </header>
         {% endblock %}
 
+	{% if request.user.is_authenticated %}
+	{% if not request.user.settings.department %}
+	<div class="container">
+	    <div class="alert alert-warning" role="alert">
+		<strong>Attention!</strong> Merci de renseigner votre
+		département dans
+		<a href="{% url 'user-detail' username=request.user.username %}">votre
+		    profil</a>.
+	    </div>
+	</div>
+	{% endif %}
+	{% endif %}
+
 	{% block page-content %}
         <div class="container">
             {% block content %}
