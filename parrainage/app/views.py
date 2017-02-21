@@ -24,6 +24,52 @@ def get_department_list(request):
         result.insert(0, request.user.settings.department)
     return result
 
+def get_department_data():
+    stats = {}
+
+    # Loop over (department, status)
+    values = Elu.objects.values('department', 'status').annotate(Count('id'))
+    for data in values:
+        department = display_department = data['department']
+        if len(display_department) == 1:
+            display_department = '0' + department
+        status = data['status']
+        count = data['id__count']
+        dep_stats = stats.setdefault(department, {
+            'department': department,
+            'display_department': display_department,
+            'count_elus': 0,
+            'count_nothing': 0,
+            'count_accepted': 0,
+            'count_refused': 0,
+            'count_contacted': 0,
+            'count_to_contact': 0,
+            'count_users': 0,
+            'user_list': [],
+        })
+        dep_stats['count_elus'] += count
+        if status == Elu.STATUS_NOTHING:
+            dep_stats['count_nothing'] += count
+        elif status == Elu.STATUS_CONTACTED:
+            dep_stats['count_contacted'] += count
+        elif status == Elu.STATUS_TO_CONTACT:
+            dep_stats['count_to_contact'] += count
+        elif status == Elu.STATUS_REFUSED:
+            dep_stats['count_refused'] += count
+        elif status >= Elu.STATUS_ACCEPTED:
+            dep_stats['count_accepted'] += count
+
+    # Loop over all users
+    users = User.objects.select_related('settings').order_by('username')
+    for user in users:
+        if not hasattr(user, 'settings'):
+            continue
+        department = user.settings.department
+        stats[department]['count_users'] += 1
+        stats[department]['user_list'].append(user)
+
+    return stats
+
 
 class HomePageView(TemplateView):
     template_name = 'home.html'
@@ -266,3 +312,28 @@ class UserRankingView(TemplateView):
 
         return context
 
+
+class DepartmentSynopticView(TemplateView):
+    template_name = 'department-synoptic.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DepartmentSynopticView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(DepartmentSynopticView, self).get_context_data(**kwargs)
+
+        stats = get_department_data()
+
+        result = list(stats.values())
+        result.sort(key=lambda x: x['display_department'])
+        context['departments_data'] = result
+
+        total = {}
+        for key in result[0].keys():
+            if not key.startswith("count_"):
+                continue
+            total[key] = sum(map(lambda x: x[key], result))
+        context['total'] = total
+
+        return context

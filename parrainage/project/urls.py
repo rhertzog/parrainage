@@ -19,6 +19,7 @@ from django.contrib import admin
 from parrainage.app.views import HomePageView, EluListView, EluDetailView
 from parrainage.app.views import EluCSVForMap, UserDetailView
 from parrainage.app.views import DepartmentRankingView, UserRankingView
+from parrainage.app.views import DepartmentSynopticView
 
 urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='home'),
@@ -31,6 +32,8 @@ urlpatterns = [
         name='department-ranking'),
     url(r'^stats/ranking/user/$', UserRankingView.as_view(),
         name='user-ranking'),
+    url(r'^stats/synoptic/department/$', DepartmentSynopticView.as_view(),
+        name='department-synoptic'),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('django.contrib.auth.urls')),
 ]
