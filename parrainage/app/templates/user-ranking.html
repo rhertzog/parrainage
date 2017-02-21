@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Classement des utilisateurs{% endblock %}
+{% block page-header-title %}<h1>Classement des utilisateurs</h1>{% endblock %}
+{% block page-content %}
+<div class="container">
+    <p>Nous sommes {{ classement_users|length }} bénévoles, chacun de nous
+    doit se fixer comme objectif de décrocher au moins 4 parrainages pour
+    être fier comme le colibri d'avoir fait sa petite part pour éteindre
+    l'incendie qui ravage notre démocratie.</p>
+    </p>
+    <table class="table table-sm table-striped">
+	<tr>
+	    <th>#</th>
+	    <th>Utilisateur</th>
+	    <th>Mises à jour effectuées</th>
+	    <th>Élus assignés</th>
+	</tr>
+	{% for benevole in classement_users %}
+	<tr>
+	    <td>{{ forloop.counter }}</td>
+	    <td>{% include 'userlink.html' with u=benevole %}</td>
+	    <td>{{ benevole.count_notes }}</td>
+	    <td>{{ benevole.count_elus }}</td>
+	</tr>
+	{% endfor %}
+    </table>
+</div>
+{% endblock %}

@@ -18,6 +18,7 @@ from django.contrib import admin
 
 from parrainage.app.views import HomePageView, EluListView, EluDetailView
 from parrainage.app.views import EluCSVForMap, UserDetailView
+from parrainage.app.views import DepartmentRankingView, UserRankingView
 
 urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='home'),
@@ -26,6 +27,10 @@ urlpatterns = [
     url(r'^user/(?P<username>[a-z]+)/$', UserDetailView.as_view(),
         name='user-detail'),
     url(r'^csv/$', EluCSVForMap.as_view(), name='elu-csv-for-map'),
+    url(r'^stats/ranking/department/$', DepartmentRankingView.as_view(),
+        name='department-ranking'),
+    url(r'^stats/ranking/user/$', UserRankingView.as_view(),
+        name='user-ranking'),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('django.contrib.auth.urls')),
 ]

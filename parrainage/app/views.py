@@ -2,8 +2,10 @@ import csv
 import logging
 
 from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count, Max
 from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, ListView, DetailView, View
 
 from parrainage.app.models import Elu, User, UserSettings
@@ -32,34 +34,17 @@ class HomePageView(TemplateView):
         context['user_count'] = User.objects.count()
         context['elus_contacted'] = Elu.objects.filter(
             status__gt=Elu.STATUS_NOTHING).count()
+        context['elus_refused'] = Elu.objects.filter(
+            status=Elu.STATUS_REFUSED).count()
         context['elus_accepted'] = Elu.objects.filter(
-            status=Elu.STATUS_ACCEPTED).count()
+            status__gte=Elu.STATUS_ACCEPTED).count()
+        context['elus_responded'] = context['elus_refused'] + \
+            context['elus_accepted']
+        context['elus_in_process'] = context['elus_contacted'] - \
+            context['elus_responded']
 
         if not self.request.user.is_authenticated():
             return context
-
-        qs = Elu.objects.filter(status__gt=Elu.STATUS_NOTHING)
-        qs = qs.values_list('department', 'status')
-
-        stats = {}
-        for department, status in qs:
-            dep_stats = stats.setdefault(department, {
-                'department': department,
-                'parrainages': 0,
-                'contacts': 0
-            })
-            dep_stats['contacts'] += 1
-            if status == Elu.STATUS_ACCEPTED:
-                dep_stats['parrainages'] += 1
-        result = list(stats.values())
-        result.sort(key=lambda x: (x['parrainages'], x['contacts']),
-                    reverse=True)
-        context['classement_departments'] = result
-
-        context['classement_users'] = User.objects.annotate(
-            count_elus=Count('elu', distinct=True)).annotate(
-            count_notes=Count('notes', distinct=True)).order_by(
-            '-count_notes', '-count_elus')
 
         context['my_elus'] = get_assigned_elus(self.request.user)
 
@@ -231,4 +216,53 @@ class UserDetailView(DetailView):
 
         return HttpResponseRedirect(
             reverse('user-detail', args=[self.request.user.username]))
+
+
+class DepartmentRankingView(TemplateView):
+    template_name = 'department-ranking.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DepartmentRankingView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(DepartmentRankingView, self).get_context_data(**kwargs)
+
+        qs = Elu.objects.filter(status__gt=Elu.STATUS_NOTHING)
+        qs = qs.values_list('department', 'status')
+
+        stats = {}
+        for department, status in qs:
+            dep_stats = stats.setdefault(department, {
+                'department': department,
+                'parrainages': 0,
+                'contacts': 0
+            })
+            dep_stats['contacts'] += 1
+            if status == Elu.STATUS_ACCEPTED:
+                dep_stats['parrainages'] += 1
+        result = list(stats.values())
+        result.sort(key=lambda x: (x['parrainages'], x['contacts']),
+                    reverse=True)
+        context['classement_departments'] = result
+
+        return context
+
+
+class UserRankingView(TemplateView):
+    template_name = 'user-ranking.html'
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(UserRankingView, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(UserRankingView, self).get_context_data(**kwargs)
+
+        context['classement_users'] = User.objects.annotate(
+            count_elus=Count('elu', distinct=True)).annotate(
+            count_notes=Count('notes', distinct=True)).order_by(
+            '-count_notes', '-count_elus')
+
+        return context
 

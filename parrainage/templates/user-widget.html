@@ -3,5 +3,5 @@
     |
     <span><a id="account-logout" href="{% url 'logout' %}?next=/">Se déconnecter</a></span>
 {% else %}
-    <span><a id="account-login" href="{% url 'login' %}">Se connecter</a></span>
+<span><a id="account-login" href="{% url 'login' %}?next={{ request.get_full_path|urlencode }}">Se connecter</a></span>
 {% endif %}

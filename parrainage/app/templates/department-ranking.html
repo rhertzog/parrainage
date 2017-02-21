@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Classement des départements{% endblock %}
+{% block page-header-title %}<h2>Classement des départements</h2>{% endblock %}
+{% block page-content %}
+<div class="container">
+    <table class="table table-sm table-striped">
+	<tr>
+	    <th>#</th>
+	    <th>Département</th>
+	    <th>Parrainages</th>
+	    <th>Élus contactés</th>
+	</tr>
+	{% for dep in classement_departments %}
+	<tr>
+	    <td>{{ forloop.counter }}</td>
+	    <td>{{ dep.department }}</td>
+	    <td>{{ dep.parrainages }}</td>
+	    <td>{{ dep.contacts }}</td>
+	</tr>
+	{% endfor %}
+    </table>
+</div>
+{% endblock %}

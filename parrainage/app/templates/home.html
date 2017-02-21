@@ -67,44 +67,23 @@
     <p></p>
     {% endif %}
     <h3>Statistiques</h3>
-    <p>{{ user_count }} bénévoles ont contacté {{ elus_contacted }} élus
-    et ont obtenu {{ elus_accepted }} parrainages.</p>
-    {% if user.is_authenticated %}
-    <h4>Classement des départements</h4>
-    <table class="table table-sm table-striped">
-	<tr>
-	    <th>#</th>
-	    <th>Département</th>
-	    <th>Parrainages</th>
-	    <th>Élus contactés</th>
-	</tr>
-	{% for dep in classement_departments %}
-	<tr>
-	    <td>{{ forloop.counter }}</td>
-	    <td>{{ dep.department }}</td>
-	    <td>{{ dep.parrainages }}</td>
-	    <td>{{ dep.contacts }}</td>
-	</tr>
-	{% endfor %}
-    </table>
-    <h4>Classement des utilisateurs</h4>
-    <table class="table table-sm table-striped">
-	<tr>
-	    <th>#</th>
-	    <th>Utilisateur</th>
-	    <th>Mises à jour effectuées</th>
-	    <th>Élus assignés</th>
-	</tr>
-	{% for benevole in classement_users %}
-	<tr>
-	    <td>{{ forloop.counter }}</td>
-	    <td>{% include 'userlink.html' with u=benevole %}</td>
-	    <td>{{ benevole.count_notes }}</td>
-	    <td>{{ benevole.count_elus }}</td>
-	</tr>
-	{% endfor %}
-    </table>
+    <ul>
+	{% if user.is_authenticated %}
+	<li>{{ user_count }} bénévoles ont contacté {{ elus_contacted }}
+	    élus parmi lesquels {{ elus_accepted }} ont donné leur
+	    parrainage, {{ elus_refused }} ont refusé (il y a donc
+	    {{ elus_in_process }} élus n'ayant pas encore répondu).</li>
+	<li><a href="{% url 'department-ranking' %}">Classement des
+		départements</a></li>
+	<li><a href="{% url 'user-ranking' %}">Classement des
+		utilisateurs</a></li>
+	{% else %}
+	<li>{{ user_count }} bénévoles ont contacté {{ elus_contacted }}
+	    élus. Des statistiques plus détaillées sont disponibles
+	    une fois connecté.
+	</li>
 
-    {% endif %}
+	{% endif %}
+    </ul>
 </div>
 {% endblock %}
