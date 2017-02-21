@@ -24,6 +24,7 @@ def get_department_list(request):
         result.insert(0, request.user.settings.department)
     return result
 
+
 def get_department_data():
     stats = {}
 
