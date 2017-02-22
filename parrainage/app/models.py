@@ -21,8 +21,8 @@ class Elu(models.Model):
 
     STATUS_CHOICES = (
         (STATUS_NOTHING, 'Rien n\'a été fait'),
-        (STATUS_CONTACTED, 'Élu contacté'),
-        (STATUS_TO_CONTACT, 'Élu doit être recontacté'),
+        (STATUS_CONTACTED, 'Démarches en cours'),
+        (STATUS_TO_CONTACT, 'Charlotte doit recontacter l\'élu'),
         (STATUS_REFUSED, 'Parrainage refusé'),
         (STATUS_ACCEPTED, 'Parrainage accepté'),
     )
