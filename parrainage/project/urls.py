@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic import TemplateView
 
 from parrainage.app.views import HomePageView, EluListView, EluDetailView
 from parrainage.app.views import EluCSVForMap, UserDetailView
@@ -34,6 +35,9 @@ urlpatterns = [
         name='user-ranking'),
     url(r'^stats/synoptic/department/$', DepartmentSynopticView.as_view(),
         name='department-synoptic'),
+    url(r'^infos-legales/',
+        TemplateView.as_view(template_name='infos-legales.html'),
+        name='infos-legales'),
     url(r'^admin/', admin.site.urls),
     url(r'^', include('django.contrib.auth.urls')),
 ]
