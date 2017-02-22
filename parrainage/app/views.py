@@ -134,6 +134,7 @@ class EluListView(ListView):
                 qs = qs.order_by('family_name', 'first_name')
         else:
             qs = qs.order_by('family_name', 'first_name')
+        qs = qs.annotate(Count('notes'))
         return qs
 
 

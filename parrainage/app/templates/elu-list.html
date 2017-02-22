@@ -12,6 +12,7 @@
 	    <th>Téléphone</th>
 	    <th>Statut</th>
 	    {% if user.is_authenticated %}
+	    <th title="Nombre de notes dans l'historique">N</th>
 	    <th>Assigné à</th>
 	    {% endif %}
 	</tr>
@@ -25,6 +26,7 @@
 	    <td>{{ elu.public_phone }}</td>
 	    {% if user.is_authenticated %}
 	    <td>{{ elu.get_status_display }}</td>
+	    <td>{% if elu.notes__count %}{{ elu.notes__count }}{% endif %}</td>
 	    <td>{% include 'userlink.html' with u=elu.assigned_to %}</td>
 	    {% else %}
 	    <td>{{ elu.get_public_status_display }}</td>
