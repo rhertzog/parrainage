@@ -124,6 +124,11 @@ class EluListView(ListView):
                     Q(city__icontains=word) |
                     Q(first_name__icontains=word)
                 )
+        assigned = self.request.GET.get('assigned')
+        if assigned == 'yes':
+            qs = qs.filter(assigned_to__isnull=False)
+        elif assigned == 'no':
+            qs = qs.filter(assigned_to__isnull=True)
         if 'sort' in self.request.GET:
             sort = self.request.GET['sort']
             if sort == 'priority':
@@ -135,6 +140,8 @@ class EluListView(ListView):
         else:
             qs = qs.order_by('family_name', 'first_name')
         qs = qs.annotate(Count('notes'))
+        if 'limit' in self.request.GET:
+            qs = qs[:int(self.request.GET['limit'])]
         return qs
 
 
