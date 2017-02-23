@@ -34,6 +34,7 @@ class Elu(models.Model):
         ('D', 'Député'),
         ('S', 'Sénateur'),
         ('DE', 'Député européen'),
+        ('A', 'Autre mandat'),
     )
 
     PUBLIC_STATUS = {
@@ -119,6 +120,9 @@ class Note(models.Model):
                              related_name='notes')
     timestamp = models.DateTimeField(auto_now_add=True)
     note = models.TextField()
+
+    class Meta:
+        ordering = ('-timestamp',)
 
 
 class UserSettings(models.Model):
