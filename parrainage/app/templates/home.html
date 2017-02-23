@@ -56,6 +56,7 @@
 	    <th>Élu</th>
 	    <th>Statut</th>
 	    <th>Dernière mise à jour</th>
+	    <th>Actions</th>
 	</tr>
 	{% for elu in my_elus %}
 	<tr>
@@ -63,6 +64,22 @@
 	    <td><a href="{{ elu.get_absolute_url }}">{{ elu }}</a></td>
 	    <td>{{ elu.get_status_display }}</td>
 	    <td>{{ elu.last_updated }} (il y a {{ elu.last_updated|timesince }})</td>
+	    <td><a class="btn btn-sm btn-primary" data-toggle="collapse"
+					   href="#notes-{{ elu.id }}">Voir
+					   notes</a></td>
+	</tr>
+	<tr>
+	    <td colspan="5">
+		<ul id="notes-{{ elu.id }}" class="collapse">
+		{% for note in elu.notes.all %}
+		    <li>
+		    Note du {{ note.timestamp }}
+		    par {% include 'userlink.html' with u=note.user %} :<br/>
+		    {{ note.note|linebreaksbr }}
+		    </li>
+		{% endfor %}
+		</ul>
+	    </td>
 	</tr>
 	{% endfor %}
     </table>
