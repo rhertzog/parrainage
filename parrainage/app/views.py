@@ -4,8 +4,10 @@ import logging
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count, Max
-from django.http import HttpResponseForbidden, HttpResponseRedirect, HttpResponse
+from django.http import HttpResponseForbidden, HttpResponseRedirect
+from django.http import HttpResponseNotFound, HttpResponse
 from django.utils.decorators import method_decorator
+from django.utils.http import urlencode
 from django.views.generic import TemplateView, ListView, DetailView, View
 
 from parrainage.app.models import Elu, User, UserSettings
@@ -74,6 +76,19 @@ def get_department_data():
         stats[department]['user_list'].append(user)
 
     return stats
+
+
+def redirect_by_city_code(request, city_code):
+    elu = Elu.objects.filter(city_code=city_code).first()
+    city_name = request.GET.get('city_name')
+    if elu:
+        redirect_url = elu.get_absolute_url()
+    elif city_name:
+        redirect_url = reverse('elu-list') + '?' + urlencode(
+            {'search': city_name})
+    else:
+        return HttpResponseNotFound('<h1>Unknown city code</h1>')
+    return HttpResponseRedirect(redirect_url)
 
 
 class HomePageView(TemplateView):

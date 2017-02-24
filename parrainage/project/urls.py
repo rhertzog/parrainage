@@ -21,6 +21,7 @@ from parrainage.app.views import HomePageView, EluListView, EluDetailView
 from parrainage.app.views import EluCSVForMap, UserDetailView
 from parrainage.app.views import DepartmentRankingView, UserRankingView
 from parrainage.app.views import DepartmentSynopticView
+from parrainage.app.views import redirect_by_city_code
 
 urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='home'),
@@ -29,6 +30,8 @@ urlpatterns = [
     url(r'^user/(?P<username>[a-z]+)/$', UserDetailView.as_view(),
         name='user-detail'),
     url(r'^csv/$', EluCSVForMap.as_view(), name='elu-csv-for-map'),
+    url(r'^r/city_code/(?P<city_code>[0-9a-zA-z]+)/$',
+        redirect_by_city_code, name='redirect-by-city-code'),
     url(r'^stats/ranking/department/$', DepartmentRankingView.as_view(),
         name='department-ranking'),
     url(r'^stats/ranking/user/$', UserRankingView.as_view(),
