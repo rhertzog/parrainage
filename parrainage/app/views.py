@@ -79,6 +79,7 @@ def get_department_data():
 
 
 def redirect_by_city_code(request, city_code):
+    city_code = city_code.lstrip('0')
     elu = Elu.objects.filter(city_code=city_code).first()
     city_name = request.GET.get('city_name')
     if elu:
