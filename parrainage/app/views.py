@@ -11,9 +11,13 @@ from django.views.generic import TemplateView, ListView, DetailView, View
 from parrainage.app.models import Elu, User, UserSettings
 
 
-def get_assigned_elus(user):
-    return user.elu_set.filter(status__lt=Elu.STATUS_REFUSED).annotate(
-        last_updated=Max('notes__timestamp')).order_by('status', 'last_updated')
+def get_assigned_elus(user, exclude_finished=True):
+    if exclude_finished:
+        qs = user.elu_set.filter(status__lt=Elu.STATUS_REFUSED)
+    else:
+        qs = user.elu_set.all()
+    return qs.annotate(last_updated=Max('notes__timestamp')).order_by(
+        'status', 'last_updated')
 
 
 def get_department_list(request):
@@ -254,7 +258,8 @@ class UserDetailView(DetailView):
         context = super(UserDetailView, self).get_context_data(**kwargs)
         del context['user']  # Avoid override of authenticated user
         if self.request.user.is_authenticated():
-            context['assigned_elus'] = get_assigned_elus(self.get_object())
+            context['assigned_elus'] = get_assigned_elus(self.get_object(),
+                                                         exclude_finished=False)
             context['departements'] = get_department_list(self.request)
         return context
 
