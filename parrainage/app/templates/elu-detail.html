@@ -19,6 +19,10 @@
 	<p><strong>Email privé:</strong> {{ object.private_email|urlize }}<br/>
 	<strong>Téléphone privé:</strong> <a href="tel:{{ object.private_phone }}">{{ object.private_phone }}</a></p>
 	{% endif %}
+	<p><strong>Réseaux sociaux:</strong>
+	<a title="Recherche sur Faceebook" href="https://www.facebook.com/search/all/?q={{ object.first_name|urlencode }}%20{{ object.family_name|urlencode }}">Facebook</a>
+	<a title="Recherche sur Twitter" href="https://twitter.com/search?f=users&q={{ object.first_name|urlencode }}%20{{ object.family_name|urlencode }}&src=typd">Twitter</a></p>
+
     </div>
     <div class="col-xs-12 col-md-4">
 	<h2>Autres infos</h2>
