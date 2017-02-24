@@ -318,11 +318,39 @@ class UserRankingView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(UserRankingView, self).get_context_data(**kwargs)
 
-        context['classement_users'] = User.objects.annotate(
+        # Initialize user list with easy counts
+        users = {}
+        qs = User.objects.annotate(
             count_elus=Count('elu', distinct=True)).annotate(
-            count_notes=Count('notes', distinct=True)).order_by(
-            '-count_notes', '-count_elus')
+            count_notes=Count('notes', distinct=True))
+        for user in qs:
+            users[user.username] = {
+                'username': user.username,
+                'count_elus': user.count_elus,
+                'count_notes': user.count_notes,
+                'count_parrainages': 0,
+                'user': user,
+            }
 
+        # Now add the number of parrainages
+        qs = Elu.objects.filter(
+            status__gte=Elu.STATUS_ACCEPTED,
+            assigned_to__isnull=False
+        ).values_list(
+            'assigned_to__username'
+        ).annotate(
+            count_parrainages=Count('id')
+        )
+        for username, count in qs:
+            users[username]['count_parrainages'] = count
+
+        # Sort the result and return it
+        classement_users = list(users.values())
+        classement_users.sort(key=lambda x: (x['count_parrainages'],
+                                             x['count_elus'],
+                                             x['count_notes']),
+                              reverse=True)
+        context['classement_users'] = classement_users
         return context
 
 

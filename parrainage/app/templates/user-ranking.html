@@ -12,15 +12,17 @@
 	<tr>
 	    <th>#</th>
 	    <th>Utilisateur</th>
-	    <th>Mises à jour effectuées</th>
+	    <th>Parrainages obtenus</th>
 	    <th>Élus assignés</th>
+	    <th>Mises à jour effectuées</th>
 	</tr>
 	{% for benevole in classement_users %}
 	<tr>
 	    <td>{{ forloop.counter }}</td>
 	    <td>{% include 'userlink.html' with u=benevole %}</td>
-	    <td>{{ benevole.count_notes }}</td>
+	    <td>{{ benevole.count_parrainages }}</td>
 	    <td>{{ benevole.count_elus }}</td>
+	    <td>{{ benevole.count_notes }}</td>
 	</tr>
 	{% endfor %}
     </table>
