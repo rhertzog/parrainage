@@ -59,7 +59,8 @@ def get_department_data():
             dep_stats['count_nothing'] += count
         elif status == Elu.STATUS_CONTACTED:
             dep_stats['count_contacted'] += count
-        elif status == Elu.STATUS_TO_CONTACT:
+        elif status == Elu.STATUS_TO_CONTACT or \
+                status == Elu.STATUS_TO_CONTACT_TEAM:
             dep_stats['count_to_contact'] += count
         elif status == Elu.STATUS_REFUSED:
             dep_stats['count_refused'] += count
@@ -319,7 +320,7 @@ class DepartmentRankingView(TemplateView):
                 'contacts': 0
             })
             dep_stats['contacts'] += 1
-            if status == Elu.STATUS_ACCEPTED:
+            if status >= Elu.STATUS_ACCEPTED:
                 dep_stats['parrainages'] += 1
         result = list(stats.values())
         result.sort(key=lambda x: (x['parrainages'], x['contacts']),

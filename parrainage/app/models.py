@@ -16,15 +16,19 @@ class Elu(models.Model):
     STATUS_NOTHING = 1
     STATUS_CONTACTED = 2
     STATUS_TO_CONTACT = 3
+    STATUS_TO_CONTACT_TEAM = 3
     STATUS_REFUSED = 10
     STATUS_ACCEPTED = 20
+    STATUS_RECEIVED = 30
 
     STATUS_CHOICES = (
         (STATUS_NOTHING, 'Rien n\'a été fait'),
         (STATUS_CONTACTED, 'Démarches en cours'),
         (STATUS_TO_CONTACT, 'Charlotte doit recontacter l\'élu'),
+        (STATUS_TO_CONTACT_TEAM, 'L\'élu souhaite être recontacté'),
         (STATUS_REFUSED, 'Parrainage refusé'),
         (STATUS_ACCEPTED, 'Parrainage accepté'),
+        (STATUS_RECEIVED, 'Parrainage reçu par le conseil constitutionnel'),
     )
 
     ROLE_CHOICES = (
