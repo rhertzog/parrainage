@@ -2,12 +2,15 @@ import csv
 import logging
 
 from django.core.urlresolvers import reverse
+from django.core.mail import send_mail
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q, Count, Max
 from django.http import HttpResponseForbidden, HttpResponseRedirect
 from django.http import HttpResponseNotFound, HttpResponse
+from django.http.response import Http404
 from django.utils.decorators import method_decorator
 from django.utils.http import urlencode
+from django.utils.crypto import get_random_string
 from django.views.generic import TemplateView, ListView, DetailView, View
 
 from parrainage.app.models import Elu, User, UserSettings
@@ -217,6 +220,134 @@ class EluDetailView(DetailView):
         return HttpResponseRedirect(self.object.get_absolute_url())
 
 
+class EluAnswerView(TemplateView):
+    template_name = 'elu-answer.html'
+
+    STATUS_MAPPING = {
+        Elu.STATUS_NOTHING: '',
+        Elu.STATUS_CONTACTED: '',
+        Elu.STATUS_TO_CONTACT: 'contact',
+        Elu.STATUS_TO_CONTACT_TEAM: 'contact-team',
+        Elu.STATUS_REFUSED: 'refuse',
+        Elu.STATUS_ACCEPTED: 'accept',
+        Elu.STATUS_RECEIVED: 'accept',
+    }
+    ANSWER_MAPPING = {
+        'accept': Elu.STATUS_ACCEPTED,
+        'refuse': Elu.STATUS_REFUSED,
+        'contact': Elu.STATUS_TO_CONTACT,
+        'contact-team': Elu.STATUS_TO_CONTACT_TEAM,
+    }
+
+    def has_valid_token(self):
+        return self.kwargs['token'] == self.get_elu().private_token
+
+    def get_elu(self):
+        if hasattr(self, 'elu'):
+            return self.elu
+        try:
+            self.elu = Elu.objects.get(pk=self.kwargs['pk'])
+            return self.elu
+        except Elu.DoesNotExist:
+            raise Http404('Unknown identifier')
+
+    def get_context_data(self, **kwargs):
+        context = super(EluAnswerView, self).get_context_data(**kwargs)
+
+        elu = self.get_elu()
+        context['elu'] = elu
+        context['has_valid_token'] = self.has_valid_token()
+        context['token'] = kwargs['token']
+        context['show_content'] = (context['has_valid_token'] or
+                                   self.request.user.is_authenticated())
+        context['status'] = self.STATUS_MAPPING.get(elu.status, '')
+        context['phone'] = elu.private_phone
+        context['email'] = elu.private_email
+        context['form_submitted'] = self.request.GET.get('done', '')
+
+        return context
+
+    def get(self, request, *args, **kwargs):
+        response = super(EluAnswerView, self).get(request, *args, **kwargs)
+        if 'done' not in request.GET and self.has_valid_token() and not \
+                request.user.is_authenticated():
+            # Track the opening client
+            client_id = request.COOKIES.get('client_id',
+                                            get_random_string(length=8))
+            response.set_cookie('client_id', client_id, max_age=2592000)
+            try:
+                count = int(request.COOKIES.get('open_count', 0))
+            except ValueError:
+                count = 0
+            count += 1
+            response.set_cookie('open_count', count, max_age=2592000)
+            # Record the opening
+            elu = self.get_elu()
+            new_note = "Formulaire de réponse ouvert depuis l'adresse IP: {}\n"
+            new_note += "{}{} ouverture depuis ce navigateur web:\n"
+            new_note += "Nom du navigateur: {}\n"
+            new_note += "Cookie de traçage: {}"
+            ere_ou_eme = "ème" if count > 1 else "ère"
+            new_note = new_note.format(request.META.get('REMOTE_ADDR', ''),
+                                       count, ere_ou_eme,
+                                       request.META.get('HTTP_USER_AGENT', ''),
+                                       client_id)
+            elu.notes.create(note=new_note)
+        return response
+
+    def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return HttpResponseForbidden('Ce formulaire n\'est pas pour vous')
+        if not self.has_valid_token():
+            logging.error('invalid token: {}'.format(kwargs))
+            return HttpResponseRedirect(reverse('elu-answer', kwargs=kwargs))
+
+        elu = self.get_elu()
+
+        status = self.request.POST.get('status', '')
+        phone = self.request.POST.get('phone', '')
+        email = self.request.POST.get('email', '')
+        note = self.request.POST.get('note', '')
+
+        elu.status = self.ANSWER_MAPPING.get(status, elu.status)
+        elu.private_phone = phone
+        elu.private_email = email
+        elu.save()
+
+        new_note = """L'élu a répondu via le formulaire:
+Nouveau statut: {}
+Email: {}
+Téléphone: {}
+Commentaires:
+{}
+Adresse IP: {} ({})
+""".format(elu.get_status_display(), email, phone, note,
+           self.request.META.get('REMOTE_ADDR', ''),
+           self.request.META.get('REMOTE_HOST', ''))
+        elu.notes.create(note=new_note)
+
+        # Send mail if answer is interesting
+        if status != 'refuse' or note:
+            sender = 'Raphaël Hertzog <raphael@ouaza.com>'
+            to = ['parrainage@listes.charlotte-marchandise.fr']
+            subject = '[{}] {}'.format(status, elu)
+            content = "http://parrainages.charlotte-marchandise.fr/elu/{}/\n".format(elu.id)
+            content += "\n" + new_note
+            if elu.assigned_to:
+                to.append(elu.assigned_to.email)
+                if hasattr(elu.assigned_to, 'settings'):
+                    user_phone = elu.assigned_to.settings.phone
+                else:
+                    user_phone = 'téléphone non-renseigné'
+                content += "Élu assigné à: {} <{}> ({})\n".format(
+                    elu.assigned_to.get_full_name(),
+                    elu.assigned_to.email,
+                    user_phone)
+            send_mail(subject, content, sender, to, fail_silently=False)
+
+        return HttpResponseRedirect(reverse('elu-answer', kwargs=kwargs) + '?done=1')
+
+
 class EluCSVForMap(View):
 
     def get(self, request, *args, **kwargs):
@@ -400,3 +531,40 @@ class DepartmentSynopticView(TemplateView):
         context['total'] = total
 
         return context
+
+
+class EluCSVForMailing(View):
+
+    def get(self, request, *args, **kwargs):
+        if not request.user.is_superuser:
+            return HttpResponseForbidden('URL restricted to super-users')
+
+        qs = Elu.objects.filter(role='M').exclude(
+            Q(public_email='') & Q(private_email='')
+        ).filter(status__lt=Elu.STATUS_REFUSED).order_by(
+            'family_name', 'first_name')
+
+        response = HttpResponse(content_type='text/plain', charset='utf-8')
+        csvwriter = csv.writer(response)
+        csvwriter.writerow([
+            'id', 'email', 'family_name', 'first_name', 'gender', 'city_size',
+            'civility', 'small_city', 'token',
+        ])
+        for elu in qs:
+            small_city = 'N'
+            if elu.city_size and elu.city_size <= 1000:
+                small_city = 'Y'
+            csvwriter.writerow([
+                elu.id,
+                elu.private_email or elu.public_email,
+                elu.family_name,
+                elu.first_name,
+                elu.gender,
+                elu.city_size if elu.city_size else '',
+                'Mme' if elu.gender == 'F' else 'M.',
+                small_city,
+                elu.private_token,
+            ])
+
+        return response
+

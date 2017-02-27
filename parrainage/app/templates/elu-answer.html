@@ -1,0 +1,434 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block title %}
+Formulaire de réponse de {{ elu.first_name }} {{ elu.family_name }}
+{% endblock %}
+{% block page-header-title %}
+<h3>Formulaire de réponse de {{ elu.first_name }} {{ elu.family_name }}</h3>
+{% endblock %}
+{% block page-header-right %}
+{% endblock %}
+{% block extra-js %}
+<script type="text/javascript">
+function show_additional_fields(v) {
+    if (v == 'accept' || v == 'contact' || v == 'contact-team') {
+	$('.hidden-by-default').show();
+    } else {
+	$('.hidden-by-default').hide();
+    }
+}
+$(function() {
+    $('#newStatus').change(function() {
+	var v = $(this).val();
+	show_additional_fields(v);
+    });
+    show_additional_fields($('#newStatus').val());
+});
+</script>
+{% endblock %}
+{% block extra-css %}
+
+{% endblock %}
+{% block page-content %}
+<div class="container">
+    {% if request.user.is_authenticated %}
+    <div class="alert alert-danger" role="alert">
+	En tant que bénévole, vous pouvez consulter cette page afin de
+	savoir ce que l'élu voit mais vous ne pouvez pas remplir le
+	formulaire...
+    </div>
+    {% elif not has_valid_token %}
+    <div class="alert alert-danger" role="alert">
+	L'identifiant secret (dernier élémént de l'adresse: {{ token }})
+	n'est pas le bon. Vous ne pouvez donc pas consulter cette page.
+	Vérifiez que vous avez bien copié-coller l'adresse complète.
+	Si le problème persiste, merci de contacter 
+	<a href="mailto:parrainage@listes.charlotte-marchandise.fr">parrainage@listes.charlotte-marchandise.fr</a>
+	et nous vous ferons parvenir le bon lien.
+    </div>
+    {% endif %}
+    {% if form_submitted %}
+    <div class="alert alert-info" role="alert">
+	{% if status == 'accept' %}
+	<p>Merci beaucoup de votre soutien ! Il ne vous reste plus qu'à
+	envoyer au conseil constitutionnel le formulaire que vous avez reçu
+	en y indiquant le nom de « MARCHANDISE-FRANQUET Charlotte » comme
+	étant celui de la candidate que vous souhaitez présenter.</p>
+	{% elif status == 'refuse' %}
+	<p>Merci d'avoir pris le temps de nous répondre !</p>
+	{% elif status == 'contact' %}
+	<p>Nous prenons bonne note de votre demande d'échanger avec
+	Charlotte Marchandise. Elle fera son possible pour vous rappeler
+	mais son emploi du temps n'est pas extensible et elle continue
+	de travailler à temps partiel pour gagner sa vie alors si vous
+	êtes disposé à échanger avec quelqu'un d'autre, n'hésitez pas à
+	modifier votre choix ci-dessous.</p>
+	{% elif status == 'contact-team' %}
+	<p>Nous prenons bonne note de votre demande d'échanger avec
+	un membre de l'équipe de campagne.
+	    {% if phone %}Cette personne vous contactera au {{ phone }}.
+	    {% else %}Vous n'avez pas rempli votre numéro de téléphone privé.
+	    Nous essaierons donc au numéro de la mairie ({{ elu.public_phone }}.
+	    {% endif %}
+	{% endif %}
+	<p>Si nécessaire, vous pouvez revenir sur votre réponse en
+	soumettant le formulaire ci-dessous une nouvelle fois.</p>
+    </div>
+    {% endif %}
+</div>
+{% if show_content %}
+<div class="container-fluid">
+    <div class="col-xs-12">
+	<form method="POST">
+	    <div class="form-group">
+		<label for="newStatus">Je soussigné {{ elu }}</label>
+		<select class="form-control" id="newStatus" name="status">
+		    <option value="">--- Merci de choisir votre réponse ---</option>
+		    <option value="accept"{% if status == 'accept' %} selected{%endif%}>
+			accepte de présenter Charlotte
+			Marchandise pour l'élection présidentielle
+		    </option>
+		    <option value="refuse"{% if status == 'refuse' %} selected{%endif%}>
+			refuse de présenter Charlotte
+			Marchandise pour l'élection présidentielle
+		    </option>
+		    <option value="contact-team"{% if status == 'contact-team' or status == 'contact' %} selected{%endif%}>
+			souhaite être recontacté par un membre de l'équipe
+			de campagne avant de me décider
+		    </option>
+		    <!--
+		    <option value="contact"{% if status == 'contact' %} selected{%endif%}>
+			souhaite être recontacté par Charlotte Marchandise avant de me décider
+		    </option>
+		    -->
+		</select>
+	    </div>
+	    <div class="hidden-by-default form-inline m-b-1">
+		<div class="form-group">
+		    <label for="newPhone">Téléphone :</label>
+		    <input type="text" id="newPhone" name="phone" class="form-control"
+				       value="{{ phone }}" placeholder="Ligne directe/privée"/>
+		</div>
+		<div class="form-group">
+		    <label for="newEmail">Email :</label>
+		    <input type="text" id="newEmail" name="email" class="form-control"
+				       value="{{ email }}"
+				       placeholder="Email personnel/privé"/>
+		</div>
+	    </div>
+	    <div class="form-group">
+		<textarea class="form-control" id="newNote" name="note"
+		    rows="2" placeholder="Vous pouvez nous laisser vos commentaires ici"></textarea>
+		<small class="form-text text-muted">Ex: une demande pour
+		    l'équipe de campagne, une justification de votre
+		    réponse, une proposition d'aide, etc.</small>
+	    </div>
+	    {% csrf_token %} 
+	    <button type="submit" class="btn btn-primary btn-lg m-b-1
+		center-block">Enregistrer ma
+		réponse</button>
+	</form>
+    </div>
+    <div class="col-xs-12 col-lg-5">
+	<h3>Pourquoi Charlotte Marchandise? Parce que…</h3>
+	<ul>
+	    <li>Plus que des solutions clés en main, <strong>c'est une
+		méthode de travail qu'elle défend</strong> : une coopération
+		entre société civile, monde associatif, experts terrains, et
+		acteurs économiques.
+		</li>
+	    <li>Adjointe déléguée à la santé à la ville de Rennes, <strong>c'est une
+                élue de terrain comme vous</strong> : elle sait que les
+		problèmes ne se résoudront pas à l'échelle nationale, mais
+		bien à l'échelle de chaque territoire avec l'appui du
+		niveau national.
+	        </li>
+	    <li><strong>Nous ne pouvons pas rester les bras croisés</strong>
+		à attendre l'effondrement de notre système politique sans
+		essayer de trouver une solution là tout de suite, en
+		2017 !
+	</ul>
+    </div>
+    <div class="col-xs-12 col-lg-7">
+	<h3>Ce que d'autres élus en disent</h3>
+	<ul class="nav nav-tabs" role="tablist">
+	  <li class="nav-item">
+	    <a class="nav-link{%if elu.gender == 'H' %} active{% endif %}" data-toggle="tab" href="#jospiegel"
+		role="tab">J. Spiegel</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link{%if elu.gender == 'F' %} active{% endif %}" data-toggle="tab" href="#tem2"
+		role="tab">V. Miranville</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link" data-toggle="tab" href="#tem3"
+		role="tab">L. Van Aertryck</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link" data-toggle="tab" href="#tem4"
+		role="tab">M-F. Nachez</a>
+	  </li>
+	  <li class="nav-item">
+	    <a class="nav-link" data-toggle="tab" href="#tem-other" role="tab">Autres</a>
+	  </li>
+	</ul>
+
+	<!-- Tab panes -->
+	<div class="tab-content">
+	    <div class="tab-pane{%if elu.gender == 'H' %} active{% endif %}" id="jospiegel" role="tabpanel" style="min-height: 321px">
+		<iframe width="560" height="315"
+		    src="https://www.youtube.com/embed/C6FG-s-U7Yk?rel=0&amp;showinfo=0"
+		    frameborder="0" allowfullscreen></iframe>
+	    </div>
+	    <div class="tab-pane{%if elu.gender == 'F' %} active{% endif %}" id="tem2" role="tabpanel" style='min-height: 321px'>
+		<p>Vidéo de Vannessa Miranville</p>
+	    </div>
+	    <div class="tab-pane" id="tem3" role="tabpanel" style='min-height: 321px'>
+		<div class="pull-xs-right">
+		    <img src="{% static 'img/portrait-lionel-van-aertryck.jpg' %}"
+		    class="img-thumbnail m-l-1" style="max-height: 200px"/>
+		</div>
+		<blockquote class="blockquote">
+		    J'ai décidé de parrainer Charlotte Marchandise parce
+qu'elle porte un message et une vision de ce que devrait être la politique
+aujourd'hui que je partage complètement. […] Je suis convaincu qu'une grande partie
+des citoyens se retrouveront dans ce qu'elle propose parce que c'est le
+résultat d'une réflexion collective au plus près des souhaits des habitants.
+		    <footer class="blockquote-footer"><a href="#" data-toggle="modal" data-target="#tem3-complet" title="Cliquez pour voir le témoignage complet">Lionel VAN AERTRYCK,
+			Maire de Saint-Médard-sur-Ille</a></footer>
+		</blockquote>
+
+<div class="modal fade" id="tem3-complet" tabindex="-1" role="dialog" aria-labelledby="tem3-complet-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title" id="tem3-complet-title">Témoignage de Lionel VAN AERTRYCK</h5>
+      </div>
+      <div class="modal-body">
+        <h5>Pourquoi parrainez-vous Charlotte Marchandise ?</h5>
+        <p>
+J'ai décidé de parrainer Charlotte Marchandise parce qu'elle porte un message et une vision de ce que devrait être la politique aujourd'hui que je partage complètement. Une vision qui doit avoir l'écho nécessaire pour être accessible et audible pour le plus grand nombre de nos citoyens. Je suis convaincu qu'une grande partie d'entre eux se retrouveront dans ce qu'elle propose parce que c’est le résultat d'une réflexion collective au plus près des souhaits des habitants.
+</p>
+	<h5>Quels sont les arguments qui ont été décisifs dans votre choix ?</h5>
+	<p>
+J'avais déjà été informé par des amis ou des habitants de sa candidature. J'ai pris le temps de consulter le site laprimaire.org et son site web. Tout ce que j'ai pu y lire n'a fait que confirmer, ligne après ligne, que ses analyses et ses propositions étaient en phase avec ce que j'ai pu vivre et faire vivre en tant que maire depuis 9 ans dans une petite commune rurale. Je partage sans retenue l'importance et l'efficacité de l'action locale, avec les habitants, dans la mise en œuvre au quotidien et au plus près de leur réalité, pour susciter l'adhésion, puis l'implication, à une politique au plus près des problématiques que nous avons à résoudre sans tarder.
+</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+	    </div>
+	    <div class="tab-pane" id="tem4" role="tabpanel" style='min-height: 321px'>
+		<div class="pull-xs-right">
+		    <img src="{% static 'img/portrait-mf-nachez.jpg' %}"
+		    class="img-thumbnail m-l-1" style="max-height: 200px"/>
+		</div>
+		<blockquote class="blockquote">
+		    Je soutiens Charlotte Marchandise parce que c'est une
+		    femme, <!-- (peu présentes dans les candidatures 2017), -->
+		    jeune, issue du monde du travail et non pas d'un
+		    système politique qui montre actuellement toutes ses
+		    limites<!-- (emplois fictifs, 49.3, etc…)-->, et qui
+		    conduit les gens à ne plus vouloir voter. Il y a une
+		    réelle attente de changement de système avec un
+		    programme social et environnemental, faisant appel aux
+		    acteurs de la société civile.
+		    <footer class="blockquote-footer">Marie-Françoise
+			NACHEZ, Maire d'Arboras</footer>
+		</blockquote>
+	    </div>
+	    <div class="tab-pane" id="tem-other" role="tabpanel" style='min-height: 321px'>
+		<ul>
+		    <li><a target="_blank" href="https://www.youtube.com/watch?v=RpIw1qI0ZUE">Brigitte RAYNAUD, Maire de Revest-des-Brousses</a> (ouvre une vidéo sur YouTube)</li>
+		    <li><a href="#" data-toggle="modal" data-target="#tem-simon">Stéphane SIMON, Maire de Puéchabon</a></li>
+		    <li><a href="#" data-toggle="modal" data-target="#tem-bailly">Frédéric BAILLY, Maire de Senlis</a></li>
+
+		</ul>
+
+<div class="modal fade" id="tem-simon" tabindex="-1" role="dialog" aria-labelledby="tem-simon-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title" id="tem-simon-title">Témoignage de Stéphane SIMON, Maire de Puéchabon</h5>
+      </div>
+      <div class="modal-body">
+        <h5>Pourquoi parrainez-vous Charlotte Marchandise ?</h5>
+        <p>
+Je ne suis pas un homme politique « professionnel » mais issu « de la
+société civile » et plus précisément du monde associatif qui a beaucoup
+contribué à mon éducation citoyenne.
+</p>
+
+<p>A mon sens, les partis politiques traditionnels, de l'extrême gauche à
+l'extrême droite, ont confisqué la démocratie. En favorisant une
+candidature issue d'une primaire citoyenne, j'engage un « acte de
+résistance » contre cette forme de dictature. Les mots sont forts, voire
+pompeux, mais ils reflètent une idée difficile à exprimer.</p>
+
+<p>Je suis contre les révolutions qui sont souvent faites <em>contre</em> et toujours <em>au
+profit de</em>. Par contre je suis favorable à une réforme de notre société et
+une primaire citoyenne est un excellent début.</p>
+
+	<h5>Quels sont les arguments qui ont été décisifs dans votre choix ?</h5>
+	<p>
+C'est une démarche d'adhésion plutôt à un principe qu'à un programme. Bien sûr,
+je n'ai rien trouvé qui aille contre mes valeurs dans les mesures proposées…
+</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="tem-bailly" tabindex="-1" role="dialog" aria-labelledby="tem-bailly-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title" id="tem-bailly-title">Témoignage de Frédéric BAILLY, Maire de Senlis</h5>
+      </div>
+      <div class="modal-body">
+        <p>
+Mme Marchandise,
+</p>
+<p>
+Je soutiens votre démarche et vos idées inscrites dans votre projet. 48 ans, enseignant de sciences dans un collège, maire rural d'une commune de 180 habitants et vice-président d'une communauté de communes de 16 000 habitants, je vous apporte ma promesse de parrainage et mon soutien moral.
+</p>
+	<blockquote class="blockquote">
+Votre parcours au travers des primaires citoyennes est exemplaire et mériterait d'attirer l'attention 
+de tous les élus de France.
+</blockquote>
+<p>
+J'ai entendu plusieurs fois Jean-Paul  Delevoye dans des congrès de maires et je puis vous affirmer qu'au travers de ses propos et ses mises en gardes aux élus en tant qu'intervenant  du CESE il a ouvert mes yeux sur la façon de considérer l'évolution de notre société. Sa sympathie à votre égard est un gage de sérieux.
+</p>
+<p>
+Être à l'écoute des citoyens devrait être la principale préoccupation des élus, la complexité et la lourdeur administrative nous pénalise au quotidien et ne nous permet pas toujours de nous y concentrer mais sachez qu'à mon échelle communale je m'y efforce et par là même je réussis à créer du lien social entre mes habitants et à leur démontrer le rôle de proximité qu'un élu se doit d'assumer…
+</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+	    </div>
+	</div>
+    </div>
+    <div style="clear: both"></div>
+
+    <div class="col-xs-12 col-lg-7">
+	<h3>Un petit mot de Charlotte</h3>
+	<div class="pull-xs-left">
+	    <img src="{% static 'img/portrait-cm.jpg' %}"
+	    class="img-thumbnail m-r-1" style="max-height: 200px"/>
+	</div>
+	<blockquote class="blockquote">
+	    Vous faites vivre la démocratie au quotidien. Cette
+	    démocratie doit pouvoir s'exercer aussi au niveau national
+	    en laissant une place à la société civile.
+	    Ayons, ensemble, le courage de tenter cette belle aventure !
+	    
+	    <footer class="blockquote-footer"><a href="#" data-toggle="modal" data-target="#msg-charlotte" title="Cliquez pour voir un message plus long">Charlotte Marchandise</a> (Tel: 06 68 03 04 04)</footer>
+	</blockquote>
+
+<div class="modal fade" id="msg-charlotte" tabindex="-1" role="dialog" aria-labelledby="msg-charlotte-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title" id="tem-simon-title">Un message de Charlotte pour vous</h5>
+      </div>
+      <div class="modal-body">
+<p>L'élection présidentielle de 2017 se présente comme une répétition des
+élections passées. À chaque scrutin, de plus en plus de Français(es) se
+détournent, s'indignent, votent blanc et surtout ne votent plus. Parmi tous
+ces déçu(e)s de la politique, nous sommes beaucoup à regretter l'absence, en
+France, d'une démocratie vivante au niveau national, qui mettrait en son centre
+les citoyens et citoyennes, la transversalité, la coopération.</p>
+
+<p>Pourtant, s'ils se
+détournent massivement des élections, les citoyen(ne)s sont loin d’être inertes
+ou résigné(e)s. En tant qu'{% if elu.gender == 'F' %}élue{% else %}élu{%endif%},
+vous le savez sans doute mieux que personne.</p>
+
+<p>Partout en France, <strong>des femmes et des hommes s'engagent chaque jour</strong> pour une
+société plus équilibrée et plus juste dans leur famille, leur quartier, au sein
+d’associations ou encore dans leur entreprise.</p>
+
+<blockquote class="blockquote">Cependant, l'action de la
+société civile sera amplifiée, renforcée, si elle peut compter sur le courage
+et la volonté politiques. La candidature citoyenne que je porte s'inscrit dans
+cette conviction que la politique est l'affaire de tous et dans cette volonté
+de co-construire notre avenir commun.
+</blockquote>
+
+<p>Me présenter, c'était prendre mes
+responsabilités et considérer que je suis co-responsable de la situation
+actuelle et aussi légitime que n'importe quel(le) candidat(e) pour contribuer à
+dégager des réponses aux questions qui taraudent la société française.</p>
+
+<p>Me parrainer, c'est offrir à ces milliers d'initiatives locales dont vous êtes
+témoin — et parfois même acteur — une voix dans le cadre de la campagne
+présidentielle.</p>
+
+<p>Me parrainer, c'est aussi soutenir et encourager un renouveau
+démocratique de la vie politique de notre pays trop largement confisquée par
+les grands partis.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    </div>
+
+    <div class="col-xs-12 col-lg-5">
+	<h3>Pour en savoir plus</h3>
+	<ul>
+	    <li><a target="_blank"
+		    href="http://charlotte-marchandise.fr/votons-pour/">Votons
+		    pour un projet du mieux-vivre</a></li>
+	    <li><a target="_blank" href="http://charlotte-marchandise.fr/le-programme-un-projet-de-societe-humaniste-a-construire-ensemble/">Le programme</a></li>
+	    <li><a target="_blank"
+	    href="http://charlotte-marchandise.fr/dans-les-medias/">Dans
+	    les médias</a></li>
+	    <li><a target="_blank"
+	    href="https://www.youtube.com/watch?v=YR4y15uFYWo">Interview
+	    dans Mediapart Live</a> (vidéo)</li>
+	</ul>
+    </div>
+    {% if elu.status != elu.STATUS_NOTHING %}
+    <div class="col-xs-12 m-t-1">
+	<h3>Votre statut actuel dans notre système</h3>
+	<strong>Statut actuel:</strong> {{ elu.get_status_display }}<br/>
+	{% with u=elu.assigned_to %}
+	{% if u %}
+	<strong>Bénévole vous ayant contacté</strong>: {{ u.get_full_name }}
+	&lt;<a href="mailto:{{ u.email }}">{{ u.email }}</a>&gt;
+	    {% if u.settings.phone %}
+	    ({{ u.settings.phone }})
+	    {% endif %}
+	{% endif %}
+	{% endwith %}
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+{% block footer %}
+<small>Pour tout problème avec ce formulaire, merci de contacter
+<a href="mailto:parrainage@listes.charlotte-marchandise.fr">parrainage@listes.charlotte-marchandise.fr</a>.
+<br/>
+<a href="{% url 'infos-legales' %}">Mentions légales</a>
+</small>
+
+{% endblock %}

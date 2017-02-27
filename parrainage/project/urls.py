@@ -18,9 +18,9 @@ from django.contrib import admin
 from django.views.generic import TemplateView
 
 from parrainage.app.views import HomePageView, EluListView, EluDetailView
-from parrainage.app.views import EluCSVForMap, UserDetailView
+from parrainage.app.views import EluCSVForMap, EluCSVForMailing, UserDetailView
 from parrainage.app.views import DepartmentRankingView, UserRankingView
-from parrainage.app.views import DepartmentSynopticView
+from parrainage.app.views import DepartmentSynopticView, EluAnswerView
 from parrainage.app.views import redirect_by_city_code
 
 urlpatterns = [
@@ -30,8 +30,11 @@ urlpatterns = [
     url(r'^user/(?P<username>[a-z]+)/$', UserDetailView.as_view(),
         name='user-detail'),
     url(r'^csv/$', EluCSVForMap.as_view(), name='elu-csv-for-map'),
+    url(r'^csv/mailing/$', EluCSVForMailing.as_view(), name='elu-csv-for-map'),
     url(r'^r/city_code/(?P<city_code>[0-9a-zA-z]+)/$',
         redirect_by_city_code, name='redirect-by-city-code'),
+    url(r'^u/(?P<pk>[0-9]+)/(?P<token>\w+)/$', EluAnswerView.as_view(),
+        name='elu-answer'),
     url(r'^stats/ranking/department/$', DepartmentRankingView.as_view(),
         name='department-ranking'),
     url(r'^stats/ranking/user/$', UserRankingView.as_view(),
