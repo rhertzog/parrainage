@@ -81,7 +81,7 @@ $(function() {
     <div class="col-xs-12">
 	<form method="POST">
 	    <div class="form-group">
-		<label for="newStatus">Je soussigné {{ elu }}</label>
+		<label for="newStatus">Je soussigné{% if elu.gender == 'F' %}e{% endif %} {{ elu }}</label>
 		<select class="form-control" id="newStatus" name="status">
 		    <option value="">--- Merci de choisir votre réponse ---</option>
 		    <option value="accept"{% if status == 'accept' %} selected{%endif%}>
@@ -143,11 +143,52 @@ $(function() {
 		bien à l'échelle de chaque territoire avec l'appui du
 		niveau national.
 	        </li>
-	    <li><strong>Nous ne pouvons pas rester les bras croisés</strong>
-		à attendre l'effondrement de notre système politique sans
-		essayer de trouver une solution là tout de suite, en
-		2017 !
+	    <li>Elle est <strong>riche d'une multitude d'expériences
+		professionnelles</strong> et c'est une candidature
+	        hors-partis. <a href="#" data-toggle="modal"
+		data-target="#pourquoi-charlotte">Plus de détails et plus de
+		réponses…</a>
+	    </li>
 	</ul>
+
+<div class="modal fade" id="pourquoi-charlotte" tabindex="-1" role="dialog" aria-labelledby="pourquoi-charlotte-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title" id="pourquoi-charlotte-title">Pourquoi Charlotte Marchandise ?</h5>
+      </div>
+      <div class="modal-body">
+        <h5>Parce que...</h5>
+        <ul>
+	    <li><strong>Actuellement consultante-formatrice, elle n'est pas une
+		    professionnelle de la politique</strong> et a déjà exercé
+		d'innombrables métiers : tour à tour infographiste,
+		chargée de web-marketing, webmestre, gérante d'un bar
+		culturel en Espagne, fondatrice et directrice d'un collège
+		Montessori ou encore chargée de mission dans le secteur
+		associatif, <strong>Charlotte est riche d'une multitude
+		    d'expériences professionnelles</strong> qui l'ancre dans la
+		réalité.</li>
+	    <li>Une candidature hors-partis : <strong>Charlotte n'a pas de parti
+		    derrière elle</strong>, seulement une association de financement
+		spécialement crée pour l'occasion et indispensable pour
+		pouvoir mener une campagne dans le cadre d'une
+		élection.</li>
+	    <li>
+		<strong>Nous ne pouvons pas rester les bras croisés</strong>
+		à attendre l'effondrement de notre système politique sans
+		essayer de trouver une solution là, tout de suite, en
+		2017 !
+	    </li>
+	</ul>
+      </div>
+    </div>
+  </div>
+</div>
+
     </div>
     <div class="col-xs-12 col-lg-7">
 	<h3>Ce que d'autres élus en disent</h3>
@@ -268,7 +309,7 @@ société civile » et plus précisément du monde associatif qui a beaucoup
 contribué à mon éducation citoyenne.
 </p>
 
-<p>A mon sens, les partis politiques traditionnels, de l'extrême gauche à
+<p>À mon sens, les partis politiques traditionnels, de l'extrême gauche à
 l'extrême droite, ont confisqué la démocratie. En favorisant une
 candidature issue d'une primaire citoyenne, j'engage un « acte de
 résistance » contre cette forme de dictature. Les mots sont forts, voire
