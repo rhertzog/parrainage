@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.utils.crypto import get_random_string
 from django.utils.html import format_html
 from django.utils.functional import cached_property
 
@@ -79,6 +80,9 @@ class Elu(models.Model):
 
     assigned_to = models.ForeignKey(User, on_delete=models.SET_NULL,
                                     blank=True, null=True)
+
+    private_token = models.CharField(max_length=20, editable=False,
+                                     default=get_random_string)
 
     def __str__(self):
         name = '{} {}'.format(self.first_name, self.family_name)
