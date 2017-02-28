@@ -65,7 +65,10 @@
 	<p>
 	<a href="/admin/app/elu/{{ object.id }}/">Page de l'élu sur
 	    l'interface d'administration</a><br/>
-	<a href="/u/{{ object.id }}/{{ object.private_token }}/">Formulaire de réponse</a> (lien privé)
+	<a href="/u/{{ object.id }}/{{ object.private_token }}/">Formulaire
+	    de réponse</a> (lien privé)<br/>
+	<strong>Nombre d'assignations publiques</strong>:
+	{{ object.public_assign_count }}
 	</p>
 	{% endif %}
     </div>

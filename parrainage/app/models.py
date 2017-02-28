@@ -84,6 +84,8 @@ class Elu(models.Model):
     private_token = models.CharField(max_length=20, editable=False,
                                      default=get_random_string)
 
+    public_assign_count = models.IntegerField(default=0, db_index=True)
+
     def __str__(self):
         name = '{} {}'.format(self.first_name, self.family_name)
         if self.role == 'M':
