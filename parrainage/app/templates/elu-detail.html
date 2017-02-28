@@ -143,7 +143,7 @@
 	</p>
 	{% endif %}
 	<h3>Aide au démarchage téléphonique</h3>
-	<p>D'abord vérifiez les <a target="_blank" href="https://lannuaire.service-public.fr/recherche?whoWhat=mairie&where={{ object.city_zipcode|urlencode }}{{ " "|urlencode }}{{ object.city|urlencode }}">a href="">horaires de la mairie</a> et planifiez votre appel à une heure
+	<p>D'abord vérifiez les <a target="_blank" href="https://lannuaire.service-public.fr/recherche?whoWhat=mairie&where={{ object.city_zipcode|urlencode }}{{ " "|urlencode }}{{ object.city|urlencode }}">horaires de la mairie</a> et planifiez votre appel à une heure
 	d'ouverture. Ensuite voici ce à quoi pourrait ressembler votre
 	entretien téléphonique:</p>
 	<table class="table table-sm table-hover">
@@ -153,7 +153,7 @@
 	    <tr><th>Vous</th><td><em>Répondez par votre prénom</em><td></tr>
 	    <tr class="bg-info text-white"><th colspan="2">Si on ne vous passe pas le maire</th></tr>
 	    <tr><th>Secrétariat</th><td>Désolé il n'est pas là.
-		    Que puis-je faire pour vous ?</td></tr>
+		    Puis-je faire quelque chose pour vous ?</td></tr>
 	    <tr><th>Vous</th><td>Oui. En fait je suis un des 127.000
 		participants à LaPrimaire.org, la première primaire
 		citoyenne organisée sur Internet en vue des élections
@@ -162,31 +162,131 @@
 		candidate. Normalement vous avez du recevoir le 28 février
 		un courrier électronique de « Aude Favre
 		&lt;soutien@lavoiecitoyenne.fr&gt; » intitulé
-		« {% if object.gender == 'F' %}M.{% else %}Mme{% endif %}
+		« {% if object.gender == 'F' %}Mme{% else %}M.{% endif %}
 		{{ object.family_name|title }}, vos électeurs vous
 		remercieront de votre courage » à ce sujet. Le message
 		vous invitait à faire suivre le courrier au maire afin
 		qu'il puisse remplir rapidement le formulaire de réponse.
 		À ce jour,
-		{% if object.gender == 'F' %}M.{% else %}Mme{% endif %} {{ object.family_name|title }}
+		{% if object.gender == 'F' %}Mme{% else %}M.{% endif %} {{ object.family_name|title }}
 		n'y a pas encore répondu. Pouvez-vous vérifier que vous
-		avez bien reçu ce message et qu'il a été transmis au maire ?
+		avez bien reçu ce message et qu'il a été transmis au
+		maire ?
 		</td></tr>
 	    <tr><th>Secrétaire</th><td><em>Cherche sur son
 			ordinateur</em>. C'est bon, je l'ai retrouvé. Je
 		    vais le faire suivre.</td></tr>
 	    <tr><th>Vous</th><td>Merci. À quel moment puis-je rappeler
 		    pour m'entretenir quelques minutes avec
-		{% if object.gender == 'F' %}M.{% else %}Mme{% endif %}
+		    {% if object.gender == 'F' %}Mme{% else %}M.{% endif %}
 		{{ object.family_name|title }} ?<br/>
 		<em>Vous prenez note de quand vous pouvez rappeler et
 		    clôture poliment la conversation.</em>
 		</td></tr>
 	    <tr class="bg-info text-white"><th colspan="2">Si on vous passe le maire</th></tr>
-	    <tr class="bg-info text-white"><th colspan="2">À compléter...</th></tr>
-	    <!-- <tr><th>Vous</th><td><em>On commence part -->
-
+	    <tr><th>Vous</th><td><em>On commence par trois questions qui
+			doivent obtenir des oui en retour:</em><br/>
+		    Bonjour,
+		    {% if object.gender == 'F' %}Mme{% else %}M.{% endif %}
+		    {{ object.family_name|title }}.
+		    Vous allez bien ?</td></tr>
+	    <tr><th>Maire</th><td>Oui, merci.</td></tr>
+	    <tr><th>Vous</th><td>Vous êtes bien 
+		    {% if object.gender == 'F' %}la{% else %}le{% endif %}
+		    maire de {{ object.city }} ?</td></tr>
+	    <tr><th>Maire</th><td>Oui.</td></tr>
+	    <tr><th>Vous</th><td>Est-ce que vous recevez beaucoup de
+		    demandes avec ce système de 500 parrainages pour les
+		    élections présidentielles ?</td></tr>
+	    <tr><th>Maire</th><td>Oui, vous ne pouvez pas imaginer. C'est
+		    un plaie.</th></tr>
+	    <tr><th>Vous</th><td>Je comprends, je vais donc essayer de
+		    faire bref. Je vous rassure, je ne vous appelle pas
+		    pour une candidature de témoignage. En fait je suis un
+		    des 127.000 participants à LaPrimaire.org, la première
+		    primaire citoyenne organisée sur Internet en vue des
+		    élections présidentielles. Cette expérience réellement
+		    démocratique a permis de désigner Charlotte
+		    Marchandise-Franquet comme candidate. Est-ce que vous
+		    en avez déjà entendu parler ?</td></tr>
+	    <tr><th>Maire</th><td>Non, désolé.</td></tr>
+	    <tr><th>Vous</th><td>Ce n'est pas grave, le système médiatique
+		    étant ce qu'il est, il préfère parler des soucis de
+		    Penelope Fillon plutôt que des vraies avancées
+		    démocratiques qui germent partout dans notre pays.
+		    <em>Enchainez sur les arguments qui vous semblent les plus
+			pertinents</em>.</td></tr>
+	    <tr><th></th><td>Charlotte est une élue de terrain comme vous,
+		    adjointe déléguée à la santé à la ville de Rennes.
+		    Elle prône une action locale au cœur des territoires
+		    pour susciter l'adhésion, puis l'implication, à une
+		    politique au plus près des problématiques que nous
+		    avons à résoudre.
+		    Elle est Présidente d'un réseau d'élus national et
+		    elle se bat avec des élus de droite comme de gauche de
+		    85 villes pour défendre les préoccupations des élus
+		    locaux, pour défendre la santé des habitants de nos
+		    communes (<a href="http://www.villes-sante.com">www.villes-sante.com</a>).
+		</td></tr>
+	    <tr><th></th><td>Charlotte ne se veut pas une femme
+		    providentielle ayant réponse à tout. Au contraire,
+		    elle nous propose une méthode d'action inclusive en
+		    coopération avec tous les acteurs de la société
+		    civile.</td></tr>
+	    <tr><th></th><td>Charlotte veut convoquer une assemblée
+		    constituante pour réformer notre système politique à
+		    bout de souffle.</td></tr>
+	    <tr><th></th><td><em>Appuyez vous sur les raisons qui font que
+			vous soutenez Charlotte</em></td></tr>
+	    <tr class="bg-info text-white"><th colspan="2">Débattez ensemble</th></tr>
+	    <tr><th>Vous</th><td>Alors qu'en dites vous ? Allez-vous
+		    parrainer Charlotte Marchandise ?</td></tr>
+	    <tr><th>Maire</th><td>... Je ne sais pas ...</td></tr>
+	    <tr><th>Vous</th><td>Très bien. Vous avez bien entendu le
+		    temps de la réflexion mais cela serait bien que vous
+		    puissiez nous communiquer votre réponse. Vous avez du
+		    recevoir un courrier électronique de l'équipe de
+		    campagne. Il est daté du 28 février, a été expédié par
+		    « Aude Favre » et a comme objet 
+		    « {% if object.gender == 'F' %}Mme{% else %}M.{% endif %}
+		    {{ object.family_name|title }}, vos électeurs vous
+		    remercieront de votre courage ».
+		    Le secrétariat avait pour instruction de vous le
+		    transmettre. L'avez-vous reçu ?</td></tr>
+	    <tr class="bg-info text-white"><th colspan="2">Si le maire a
+		    bien reçu le courrier électronique</th></tr>
+	    <tr><th>Maire</th><td>Oui.</td></tr>
+	    <tr><th>Vous</th><td>Très bien. Dans ce cas, il ne vous reste
+		    plus qu'à vous décider, à nous faire part de votre
+		    réponse et éventuellement à renvoyer le formulaire de
+		    présentation d'un candidat au conseil constitutionnel.
+	    <tr class="bg-info text-white"><th colspan="2">Si le maire n'a
+		    pas reçu le courrier électronique</th></tr>
+	    <tr><th>Maire</th><td>Non.</td></tr>
+	    <tr><th>Vous</th><td>Je vais rappeler votre secrétaire pour
+		    lui demander de le retrouver dans l'historique et de
+		    vous le faire suivre. Vous n'aurez plus qu'à vous
+		    décider et à faire part de votre décision via le
+		    formulaire de réponse dont le lien est disponible
+		    dans le message en question. Et évidemment à envoyer
+		    le formulaire au conseil constitutionnel si vous
+		    acceptez de parrainer Charlotte.
+		    </td></tr>
+	    <tr class="bg-info text-white"><th colspan="2">Pour
+		    conclure</td></tr>
+	    <tr><th>Vous</th><td>
+		    Avez-vous d'autres questions ou demandes pour l'équipe
+		    de campagne ?</td></tr>
+	    <tr><th>Maire</th><td>Non.</td></tr>
+	    <tr><th>Vous</th><td>Parfait. Merci de votre attention, bonne
+		    journée.</td></tr>
 	</table>
+	<p>
+	Si le maire a des demandes particulières pour l'équipe de
+	campagne, ou si vous pensez qu'il y a un élément important
+        que nous devons savoir,	merci de nous faire un retour à
+	<a href="mailto:parrainage@listes.charlotte-marchandise.fr?subject=À propos de {{ elu }} [{{ elu.id }}]">parrainage@listes.charlotte-marchandise.fr</a>.
+	</p>
     </div>
     {% endif %}
     {% endif %}
