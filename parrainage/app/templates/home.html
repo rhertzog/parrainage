@@ -6,6 +6,18 @@
     </div>
 </div>
 <div class="container">
+    {% if not user.is_authenticated %}
+    {% if my_elu %}
+    <h3>Mon élu à contacter</h3>
+    <p><a href="{{ my_elu.get_absolute_url }}?assigned=1">{{ my_elu }}</a></p>
+    <p><a href="{% url 'assign' %}?action=unassign&elu_id={{ my_elu.id }}"
+	class="btn btn-primary">Finalement, je ne veux pas le faire</a>
+    </p>
+    {% else %}
+    <h3>Je veux contacter un maire pour vous aider</h3>
+    <a href="{% url 'assign' %}" class="btn btn-primary">Assignez moi un maire</a></p>
+    {% endif %}
+    {% endif %}
     <h3>Rechercher un élu</h3>
     <div>
 	<form action="{% url 'elu-list' %}" method="GET" class="form-inline">

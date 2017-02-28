@@ -1,5 +1,6 @@
 import csv
 import logging
+import random
 
 from django.core.urlresolvers import reverse
 from django.core.mail import send_mail
@@ -12,6 +13,7 @@ from django.utils.decorators import method_decorator
 from django.utils.http import urlencode
 from django.utils.crypto import get_random_string
 from django.views.generic import TemplateView, ListView, DetailView, View
+from django.views.generic import RedirectView
 
 from parrainage.app.models import Elu, User, UserSettings
 
@@ -115,6 +117,12 @@ class HomePageView(TemplateView):
             context['elus_responded']
 
         if not self.request.user.is_authenticated():
+            assigned_elu = self.request.COOKIES.get('assigned_elu')
+            if assigned_elu:
+                try:
+                    context['my_elu'] = Elu.objects.get(pk=int(assigned_elu))
+                except:
+                    pass
             return context
 
         context['my_elus'] = get_assigned_elus(self.request.user)
@@ -172,6 +180,14 @@ class EluListView(ListView):
 class EluDetailView(DetailView):
     queryset = Elu.objects.all()
     template_name = 'elu-detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(EluDetailView, self).get_context_data(**kwargs)
+        if not self.request.user.is_authenticated():
+            assigned_elu = self.request.COOKIES.get('assigned_elu')
+            if str(assigned_elu) == str(context['object'].id):
+                context['assigned'] = 1
+        return context
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated():
@@ -568,3 +584,56 @@ class EluCSVForMailing(View):
 
         return response
 
+
+class PublicAssignation(View):
+
+    def select_elu(self):
+        which_one = random.randint(0, 99)
+        try:
+            elu = Elu.objects.exclude(public_phone='').exclude(
+                status__gte=Elu.STATUS_REFUSED
+            ).filter(role='M').filter(city_size__lt=5000).order_by(
+                    'public_assign_count', 'priority')[which_one]
+            return elu
+        except IndexError:
+            return None
+
+    def get(self, request, *args, **kwargs):
+        assigned_elu = request.COOKIES.get(
+            'assigned_elu', request.GET.get('elu_id'))
+        action = request.GET.get('action', 'assign')
+        if action == 'unassign' and assigned_elu:
+            try:
+                elu = Elu.objects.get(pk=int(assigned_elu))
+                elu.public_assign_count = elu.public_assign_count - 1
+                elu.save()
+            except:
+                pass
+            response = HttpResponseRedirect('/')
+            response.delete_cookie('assigned_elu')
+        elif action == 'assign':
+            forcenew = request.GET.get('forcenew')
+            if assigned_elu and not forcenew:
+                try:
+                    elu = Elu.objects.get(pk=int(assigned_elu))
+                except:
+                    elu = None
+            else:
+                elu = self.select_elu()
+                if elu:
+                    elu.public_assign_count += 1
+                    elu.save()
+
+            if not elu:
+                return HttpResponseRedirect('/')
+
+            redirect_url = '{}?{}'.format(
+                reverse('elu-detail', kwargs={'pk': elu.id}),
+                urlencode({'assigned': 1}),
+            )
+            response = HttpResponseRedirect(redirect_url)
+            response.set_cookie('assigned_elu', elu.id, max_age=2592000)
+        else:
+            response = HttpResponseRedirect('/')
+
+        return response

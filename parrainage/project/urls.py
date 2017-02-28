@@ -21,7 +21,7 @@ from parrainage.app.views import HomePageView, EluListView, EluDetailView
 from parrainage.app.views import EluCSVForMap, EluCSVForMailing, UserDetailView
 from parrainage.app.views import DepartmentRankingView, UserRankingView
 from parrainage.app.views import DepartmentSynopticView, EluAnswerView
-from parrainage.app.views import redirect_by_city_code
+from parrainage.app.views import redirect_by_city_code, PublicAssignation
 
 urlpatterns = [
     url(r'^$', HomePageView.as_view(), name='home'),
@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^csv/mailing/$', EluCSVForMailing.as_view(), name='elu-csv-for-map'),
     url(r'^r/city_code/(?P<city_code>[0-9a-zA-z]+)/$',
         redirect_by_city_code, name='redirect-by-city-code'),
+    url(r'r/assign/', PublicAssignation.as_view(), name='assign'),
     url(r'^u/(?P<pk>[0-9]+)/(?P<token>\w+)/$', EluAnswerView.as_view(),
         name='elu-answer'),
     url(r'^stats/ranking/department/$', DepartmentRankingView.as_view(),

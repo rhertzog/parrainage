@@ -130,7 +130,65 @@
 	    <button type="submit" class="btn btn-primary">Mettre à jour les coordonnées</button>
 	</form>
     </div>
+    {% endif %}
+    {% if object.role == 'M' %}
+    {% if user.is_authenticated or request.GET.assigned %}
+    <div class="col-xs-12 m-t-1">
+	{% if assigned %}
+	<h3>Actions possibles</h3>
+	<p><a href="{% url 'assign' %}?action=unassign&elu_id={{ object.id }}"
+	    class="btn btn-primary">Finalement, je ne contacterai pas cet élu</a>
+	   <a href="{% url 'assign' %}?action=assign&forcenew=1"
+	   class="btn btn-primary">J'ai contacté cet élu, j'en veux un autre</a>
+	</p>
+	{% endif %}
+	<h3>Aide au démarchage téléphonique</h3>
+	<p>D'abord vérifiez les <a target="_blank" href="https://lannuaire.service-public.fr/recherche?whoWhat=mairie&where={{ object.city_zipcode|urlencode }}{{ " "|urlencode }}{{ object.city|urlencode }}">a href="">horaires de la mairie</a> et planifiez votre appel à une heure
+	d'ouverture. Ensuite voici ce à quoi pourrait ressembler votre
+	entretien téléphonique:</p>
+	<table class="table table-sm table-hover">
+	    <tr><th>Vous</th><td>Bonjour, je vourai parler à
+		    {{ object.first_name }}.</td></tr>
+	    <tr><th>Secrétariat</th><td>De la part de qui ?</td></tr>
+	    <tr><th>Vous</th><td><em>Répondez par votre prénom</em><td></tr>
+	    <tr class="bg-info text-white"><th colspan="2">Si on ne vous passe pas le maire</th></tr>
+	    <tr><th>Secrétariat</th><td>Désolé il n'est pas là.
+		    Que puis-je faire pour vous ?</td></tr>
+	    <tr><th>Vous</th><td>Oui. En fait je suis un des 127.000
+		participants à LaPrimaire.org, la première primaire
+		citoyenne organisée sur Internet en vue des élections
+		présidentielles. Cette expérience réellement démocratique
+		a permis de désigner Charlotte Marchandise-Franquet comme
+		candidate. Normalement vous avez du recevoir le 28 février
+		un courrier électronique de « Aude Favre
+		&lt;soutien@lavoiecitoyenne.fr&gt; » intitulé
+		« {% if object.gender == 'F' %}M.{% else %}Mme{% endif %}
+		{{ object.family_name|title }}, vos électeurs vous
+		remercieront de votre courage » à ce sujet. Le message
+		vous invitait à faire suivre le courrier au maire afin
+		qu'il puisse remplir rapidement le formulaire de réponse.
+		À ce jour,
+		{% if object.gender == 'F' %}M.{% else %}Mme{% endif %} {{ object.family_name|title }}
+		n'y a pas encore répondu. Pouvez-vous vérifier que vous
+		avez bien reçu ce message et qu'il a été transmis au maire ?
+		</td></tr>
+	    <tr><th>Secrétaire</th><td><em>Cherche sur son
+			ordinateur</em>. C'est bon, je l'ai retrouvé. Je
+		    vais le faire suivre.</td></tr>
+	    <tr><th>Vous</th><td>Merci. À quel moment puis-je rappeler
+		    pour m'entretenir quelques minutes avec
+		{% if object.gender == 'F' %}M.{% else %}Mme{% endif %}
+		{{ object.family_name|title }} ?<br/>
+		<em>Vous prenez note de quand vous pouvez rappeler et
+		    clôture poliment la conversation.</em>
+		</td></tr>
+	    <tr class="bg-info text-white"><th colspan="2">Si on vous passe le maire</th></tr>
+	    <tr class="bg-info text-white"><th colspan="2">À compléter...</th></tr>
+	    <!-- <tr><th>Vous</th><td><em>On commence part -->
 
+	</table>
+    </div>
+    {% endif %}
     {% endif %}
 </div>
 {% endblock %}
