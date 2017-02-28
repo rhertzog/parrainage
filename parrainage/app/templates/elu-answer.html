@@ -20,9 +20,17 @@ function show_additional_fields(v) {
 $(function() {
     $('#newStatus').change(function() {
 	var v = $(this).val();
+	$('#status-field').removeClass('has-danger');
 	show_additional_fields(v);
     });
     show_additional_fields($('#newStatus').val());
+    $('#answer-form').submit(function(event) {
+	if ($('#newStatus').val() == '') {
+	    $('#status-field').addClass('has-danger');
+	    alert('Vous devez sélectionner une réponse !');
+	    event.preventDefault();
+	}
+    });
 });
 </script>
 {% endblock %}
@@ -79,8 +87,8 @@ $(function() {
 {% if show_content %}
 <div class="container-fluid">
     <div class="col-xs-12">
-	<form method="POST">
-	    <div class="form-group">
+	<form method="POST" id="answer-form">
+	    <div class="form-group" id="status-field">
 		<label for="newStatus">Je soussigné{% if elu.gender == 'F' %}e{% endif %} {{ elu }}</label>
 		<select class="form-control" id="newStatus" name="status">
 		    <option value="">--- Merci de choisir votre réponse ---</option>
