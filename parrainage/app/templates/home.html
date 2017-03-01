@@ -3,6 +3,16 @@
 <div class="introduction">
     <div class="container">
         <p class="lead m-b-4">Ce service permet de coordonner la recherche des parrainages pour Charlotte Marchandise.</p>
+    {% if not user.is_authenticated %}
+        <p class="lead m-b-4">Si vous avez du temps et souhaitez aider, commencez par lire
+	<a target="_blank"
+	    href="http://charlotte-marchandise.fr/chamawiki/doku.php?id=public:parrainages">notre documentation</a> et demandez un compte sur
+	ce service en écrivant à
+	<a
+	    href="mailto:parrainage@listes.charlotte-marchandise.fr">parrainage@listes.charlotte-marchandise.fr</a>.
+	Si vous n'avez que peu de temps, vous pouvez aider en appelant juste
+	un maire (première section ci-dessous).</p>
+    {% endif %}
     </div>
 </div>
 <div class="container">
