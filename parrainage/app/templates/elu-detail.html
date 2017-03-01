@@ -4,6 +4,16 @@
 <h1>{{ object.first_name }} {{ object.family_name }}</h1>
 {% endblock %}
 {% block page-content %}
+{% if request.GET.assigned %}
+<div class="container">
+    <div class="alert alert-success">
+	Merci encore pour votre aide précieuse ! Voici la page du maire
+	que nous vous avons assigné, il s'agit d'un maire que nous pensons
+	etre sensible à notre démarche. Si vous pouviez le contacter
+	rapidement, cela nous aiderait énormément. Merci beaucoup !
+    </div>
+</div>
+{% endif %}
 <div class="container-fluid">
     <div class="col-xs-12 col-md-4">
 	<h2>Infos de contact</h2>
