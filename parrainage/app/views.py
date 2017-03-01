@@ -28,8 +28,9 @@ def get_assigned_elus(user, exclude_finished=True):
 
 
 def get_department_list(request):
-    result = list(Elu.objects.only('department').values_list(
-            'department', flat=True).distinct().order_by('department'))
+    result = list(Elu.objects.only('department').exclude(department='').
+                  values_list('department', flat=True).distinct(
+                  ).order_by('department'))
     if request.user.is_authenticated() and hasattr(request.user, 'settings') \
             and request.user.settings.department:
         result.insert(0, request.user.settings.department)
