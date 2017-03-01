@@ -61,6 +61,11 @@
 	</form>
     </div>
     <p></p>
+    {% if user.is_authenticated %}
+    <h3>Consulter les élus prioritaires</h3>
+    <p><a href="{% url 'elu-list' %}?sort=priority&assigned=no&finished=no&limit=100">Top 100
+	des élus les plus prioritaires qui ne sont assignés à personne</a></p>
+    {% endif %}
     <h3>Liens utiles</h3>
     <ul>
 	<li><a href="https://umap.openstreetmap.fr/fr/map/carte-des-parrainages_126228#6/46.875/6.548">Carte des élus</a> : identifiez les élus près de chez vous qu'il reste à contacter.</li>

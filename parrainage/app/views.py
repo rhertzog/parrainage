@@ -143,13 +143,17 @@ class EluListView(ListView):
         if self.request.user.is_authenticated():
             if 'status' in self.request.GET:
                 qs = qs.filter(status=self.request.GET['status'])
+
         if 'department' in self.request.GET:
             qs = qs.filter(department=self.request.GET['department'])
+
         if 'gender' in self.request.GET:
             qs = qs.filter(gender=self.request.GET['gender'])
+
         if 'nuance_politique' in self.request.GET:
             qs = qs.filter(
                 nuance_politique=self.request.GET['nuance_politique'])
+
         if 'search' in self.request.GET:
             for word in self.request.GET['search'].split():
                 qs = qs.filter(
@@ -157,11 +161,19 @@ class EluListView(ListView):
                     Q(city__icontains=word) |
                     Q(first_name__icontains=word)
                 )
+
         assigned = self.request.GET.get('assigned')
         if assigned == 'yes':
             qs = qs.filter(assigned_to__isnull=False)
         elif assigned == 'no':
             qs = qs.filter(assigned_to__isnull=True)
+
+        finished = self.request.GET.get('finished')
+        if finished == 'yes':
+            qs = qs.filter(status__gte=Elu.STATUS_REFUSED)
+        elif finished == 'no':
+            qs = qs.filter(status__lt=Elu.STATUS_REFUSED)
+
         if 'sort' in self.request.GET:
             sort = self.request.GET['sort']
             if sort == 'priority':
@@ -172,6 +184,7 @@ class EluListView(ListView):
                 qs = qs.order_by('family_name', 'first_name')
         else:
             qs = qs.order_by('family_name', 'first_name')
+
         qs = qs.annotate(Count('notes'))
         if 'limit' in self.request.GET:
             qs = qs[:int(self.request.GET['limit'])]
