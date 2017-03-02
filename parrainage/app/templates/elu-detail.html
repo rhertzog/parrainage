@@ -157,10 +157,15 @@
 	d'ouverture. Ensuite voici ce à quoi pourrait ressembler votre
 	entretien téléphonique:</p>
 	<table class="table table-sm table-hover">
-	    <tr><th>Vous</th><td>Bonjour, je vourai parler à
-		    {{ object.first_name }}.</td></tr>
-	    <tr><th>Secrétariat</th><td>De la part de qui ?</td></tr>
-	    <tr><th>Vous</th><td><em>Répondez par votre prénom</em><td></tr>
+	    <tr><th>Vous</th><td>Bonjour, je voudrais parler à
+		    {{ object.first_name }} {{ objet.family_name }}.<br/>
+		    <em>Citer le prénom en premier (et même omettre le
+			nom de famille) augmente vos chances que l'on vous
+			passe le maire directement.</em>
+		</td></tr>
+	    <tr><th>Secrétariat</th><td>C'est de la part de qui ?</td></tr>
+	    <tr><th>Vous</th><td><em>Répondez par votre prénom suivi
+			éventuellement de votre nom de famille.</em><td></tr>
 	    <tr class="bg-info text-white"><th colspan="2">Si on ne vous passe pas le maire</th></tr>
 	    <tr><th>Secrétariat</th><td>Désolé il n'est pas là.
 		    Puis-je faire quelque chose pour vous ?</td></tr>
@@ -169,7 +174,7 @@
 		citoyenne organisée sur Internet en vue des élections
 		présidentielles. Cette expérience réellement démocratique
 		a permis de désigner Charlotte Marchandise-Franquet comme
-		candidate. Normalement vous avez du recevoir le 28 février
+		candidate. Normalement vous avez dû recevoir le 28 février
 		un courrier électronique de « Aude Favre
 		&lt;soutien@lavoiecitoyenne.fr&gt; » intitulé
 		« {% if object.gender == 'F' %}Mme{% else %}M.{% endif %}
@@ -191,7 +196,7 @@
 		    {% if object.gender == 'F' %}Mme{% else %}M.{% endif %}
 		{{ object.family_name|title }} ?<br/>
 		<em>Vous prenez note de quand vous pouvez rappeler et
-		    clôture poliment la conversation.</em>
+		    clôturer poliment la conversation.</em>
 		</td></tr>
 	    <tr class="bg-info text-white"><th colspan="2">Si on vous passe le maire</th></tr>
 	    <tr><th>Vous</th><td><em>On commence par trois questions qui
@@ -222,9 +227,9 @@
 	    <tr><th>Maire</th><td>Non, désolé.</td></tr>
 	    <tr><th>Vous</th><td>Ce n'est pas grave, le système médiatique
 		    étant ce qu'il est, il préfère parler des soucis de
-		    Penelope Fillon plutôt que des vraies avancées
+		    Pénélope Fillon plutôt que des vraies avancées
 		    démocratiques qui germent partout dans notre pays.
-		    <em>Enchainez sur les arguments qui vous semblent les plus
+		    <em>Enchaînez sur les arguments qui vous semblent les plus
 			pertinents</em>.</td></tr>
 	    <tr><th></th><td>Charlotte est une élue de terrain comme vous,
 		    adjointe déléguée à la santé à la ville de Rennes.
