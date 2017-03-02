@@ -199,14 +199,14 @@ $(function() {
     </div>
     <div class="col-xs-12 col-lg-7">
 	<h3>Ce que d'autres élus en disent</h3>
-	<ul class="nav nav-tabs" role="tablist">
+	<ul class="nav nav-tabs" style="font-size: 80%" role="tablist">
 	  <li class="nav-item">
 	    <a class="nav-link{%if elu.gender == 'H' %} active{% endif %}" data-toggle="tab" href="#jospiegel"
 		role="tab">J. Spiegel</a>
 	  </li>
 	  <li class="nav-item">
 	    <a class="nav-link{%if elu.gender == 'F' %} active{% endif %}" data-toggle="tab" href="#tem2"
-		role="tab">V. Miranville</a>
+		role="tab">N. Perrin-Gilbert</a>
 	  </li>
 	  <li class="nav-item">
 	    <a class="nav-link" data-toggle="tab" href="#tem3"
@@ -214,7 +214,7 @@ $(function() {
 	  </li>
 	  <li class="nav-item">
 	    <a class="nav-link" data-toggle="tab" href="#tem4"
-		role="tab">M. Nachez</a>
+		role="tab">V. Miranville</a>
 	  </li>
 	  <li class="nav-item">
 	    <a class="nav-link" data-toggle="tab" href="#tem-other" role="tab">Autres</a>
@@ -230,7 +230,7 @@ $(function() {
 	    </div>
 	    <div class="tab-pane{%if elu.gender == 'F' %} active{% endif %}" id="tem2" role="tabpanel" style='min-height: 321px'>
 		<iframe width="560" height="315"
-		    src="https://www.youtube.com/embed/3ujikZLPvMk?rel=0&amp;showinfo=0"
+		    src="https://www.youtube.com/embed/EqohvDKWhT4?rel=0&amp;showinfo=0"
 		    frameborder="0" allowfullscreen></iframe>
 	    </div>
 	    <div class="tab-pane" id="tem3" role="tabpanel" style='min-height: 321px'>
@@ -273,16 +273,39 @@ J'avais déjà été informé par des amis ou des habitants de sa candidature. J
 
 	    </div>
 	    <div class="tab-pane" id="tem4" role="tabpanel" style='min-height: 321px'>
+		<iframe width="560" height="315"
+		    src="https://www.youtube.com/embed/3ujikZLPvMk?rel=0&amp;showinfo=0"
+		    frameborder="0" allowfullscreen></iframe>
+	    </div>
+	    <div class="tab-pane" id="tem-other" role="tabpanel" style='min-height: 321px'>
+		<ul>
+		    <li><a target="_blank" href="https://www.youtube.com/watch?v=RpIw1qI0ZUE">Brigitte RAYNAUD, Maire de Revest-des-Brousses</a> (ouvre une vidéo sur YouTube)</li>
+		    <li><a href="#" data-toggle="modal" data-target="#tem-simon">Stéphane SIMON, Maire de Puéchabon</a></li>
+		    <li><a href="#" data-toggle="modal" data-target="#tem-bailly">Frédéric BAILLY, Maire de Senlis</a></li>
+		    <li><a href="#" data-toggle="modal" data-target="#tem-nachez">Marie-François NACHEZ, Maire d'Arboras</a></li>
+
+		</ul>
+
+<div class="modal fade" id="tem-nachez" tabindex="-1" role="dialog" aria-labelledby="tem-simon-title" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="modal-title" id="tem-simon-title">Témoignage de Marie-François Nachez, Maire d'Arboras</h5>
+      </div>
+      <div class="modal-body">
 		<div class="pull-xs-right">
 		    <img src="{% static 'img/portrait-mf-nachez.jpg' %}"
 		    class="img-thumbnail m-l-1" style="max-height: 200px"/>
 		</div>
 		<blockquote class="blockquote">
 		    Je soutiens Charlotte Marchandise parce que c'est une
-		    femme, <!-- (peu présentes dans les candidatures 2017), -->
+		    femme, (peu présentes dans les candidatures 2017),
 		    jeune, issue du monde du travail et non pas d'un
 		    système politique qui montre actuellement toutes ses
-		    limites<!-- (emplois fictifs, 49.3, etc…)-->, et qui
+		    limites (emplois fictifs, 49.3, etc…), et qui
 		    conduit les gens à ne plus vouloir voter. Il y a une
 		    réelle attente de changement de système avec un
 		    programme social et environnemental, faisant appel aux
@@ -290,14 +313,10 @@ J'avais déjà été informé par des amis ou des habitants de sa candidature. J
 		    <footer class="blockquote-footer">Marie-Françoise
 			NACHEZ, Maire d'Arboras</footer>
 		</blockquote>
-	    </div>
-	    <div class="tab-pane" id="tem-other" role="tabpanel" style='min-height: 321px'>
-		<ul>
-		    <li><a target="_blank" href="https://www.youtube.com/watch?v=RpIw1qI0ZUE">Brigitte RAYNAUD, Maire de Revest-des-Brousses</a> (ouvre une vidéo sur YouTube)</li>
-		    <li><a href="#" data-toggle="modal" data-target="#tem-simon">Stéphane SIMON, Maire de Puéchabon</a></li>
-		    <li><a href="#" data-toggle="modal" data-target="#tem-bailly">Frédéric BAILLY, Maire de Senlis</a></li>
-
-		</ul>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal fade" id="tem-simon" tabindex="-1" role="dialog" aria-labelledby="tem-simon-title" aria-hidden="true">
   <div class="modal-dialog" role="document">
