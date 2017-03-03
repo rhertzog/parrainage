@@ -55,6 +55,7 @@ class Command(BaseCommand):
             if hasattr(user, 'settings') and user.settings.department:
                 elus_a_traiter = Elu.objects.filter(
                     assigned_to__isnull=True,
+                    status__lt=Elu.STATUS_REFUSED,
                     department=user.settings.department
                 ).order_by('priority')[:5]
             elus_assignes = Elu.objects.filter(
