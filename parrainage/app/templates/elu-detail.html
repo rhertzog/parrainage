@@ -104,6 +104,7 @@
     <div class="col-xs-12">
 	<h3>Ajout d'une note et mise à jour du statut</h3>
 	<form method="POST">
+	    {% if object.status != object.STATUS_RECEIVED %}
 	    <div class="form-group">
 		<label for="newStatus">Nouveau statut:</label>
 		<select class="form-control" id="newStatus" name="status">
@@ -113,6 +114,7 @@
 		    {% endfor %}
 		</select>
 	    </div>
+	    {% endif %}
 	    <div class="form-group">
 		<label for="newNote">Nouvelle note:</label>
 		<textarea class="form-control" id="newNote" name="note" rows="3"></textarea>
