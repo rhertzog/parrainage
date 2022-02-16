@@ -30,6 +30,19 @@ python manage.py migrate
 
 ## Charger les données
 
+### Liste des maires
+
+- Récupérer `rne-maires.csv` depuis https://www.data.gouv.fr/fr/datasets/repertoire-national-des-elus-1/
+
+- Récupérer `mairies.csv` depuis https://www.data.gouv.fr/fr/datasets/service-public-fr-annuaire-de-l-administration-base-de-donnees-locales/
+
+- Lancer la commande (ça peut être long...) :
+```
+python manage.py import_maires rne-maires.csv
+```
+
+### Liste des autres élus locaux
+
 TODO
 
 
