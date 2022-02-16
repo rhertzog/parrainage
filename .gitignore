@@ -1,3 +1,5 @@
 __pycache__
 parrainage/db.sqlite3
+parrainage/db.sqlite3-journal
 .ropeproject
+venv
