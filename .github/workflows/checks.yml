@@ -1,0 +1,29 @@
+name: Vérifications
+
+on: push
+
+jobs:
+  checks:
+    name: Vérifications
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copie de travail
+        uses: actions/checkout@v2
+
+      - name: Locale française
+        run: |
+          sudo apt-get install locales-all
+          sudo localectl set-locale LANG=fr_FR.utf8
+
+      - name: Installation de Python 3.5
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.5
+
+      - name: Installation des dépendances Python
+        run: |
+          python3 -m pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Tests automatisés
+        run: |
+          pytest
