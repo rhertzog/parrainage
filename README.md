@@ -78,6 +78,18 @@ python manage.py import_elus --mandat=S rne-sen.csv
 ```
 
 
+#### Parrainages déjà validés
+
+- Télécharger le CSV depuis https://presidentielle2022.conseil-constitutionnel.fr/les-parrainages/tous-les-parrainages-valides.html
+
+- Lancer la commande :
+```
+python manage.py import_parrainages parrainagestotal.csv --candidate="TAUBIRA Christiane"
+```
+
+La correspondance entre la liste du CC et celle du RNE n’est pas robuste (par manque d’un identifiant unique), donc 100% des parrainages ne pourront pas attribués, et quelques mises à jour manuelles pourront être requises.
+
+
 ### Créer un super-utilisateur
 
 ```
