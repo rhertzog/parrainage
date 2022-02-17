@@ -28,7 +28,14 @@ SECRET_KEY = '$bi$*vapnotv4gh^#t)bzegc#^z_9po-o)*j)^4o*#hk&@um$+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+try:
+    env_allowed_hosts = os.environ["ALLOWED_HOSTS"].split(",")
+except KeyError:
+    env_allowed_hosts = []
+
+ALLOWED_HOSTS = ["localhost"] + env_allowed_hosts
+
 
 # Email related settings
 ADMINS = (
