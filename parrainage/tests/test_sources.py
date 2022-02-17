@@ -4,8 +4,8 @@ import pytest
 
 
 TSV_RNE_MAIRES = """\
-Code du département	Libellé du département	Code de la collectivité à statut particulier	Libellé de la collectivité à statut particulier	Code de la commune	Libellé de la commune	Nom de l'élu	Prénom de l'élu	Code sexe	Date de naissance	Code de la catégorie socio-professionnelle	Libellé de la catégorie socio-professionnelle	Date de début du mandat	Date de début de la fonction
-01	Ain			01001	L'Abergement-Clémenciat	BOULON	Daniel	M	04/03/1951	74	Ancien cadre	18/05/2020	26/05/2020
+Code du département\tLibellé du département\tCode de la collectivité à statut particulier\tLibellé de la collectivité à statut particulier\tCode de la commune\tLibellé de la commune\tNom de l'élu\tPrénom de l'élu\tCode sexe\tDate de naissance\tCode de la catégorie socio-professionnelle\tLibellé de la catégorie socio-professionnelle\tDate de début du mandat\tDate de début de la fonction
+01\tAin\t\t\t01001\tL'Abergement-Clémenciat\tBOULON\tDaniel\tM\t04/03/1951\t74\tAncien cadre\t18/05/2020\t26/05/2020
 """
 
 
