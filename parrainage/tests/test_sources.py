@@ -36,7 +36,7 @@ def test_tsv_rne(row_rne):
 
 
 def test_parse_elu(row_rne):
-    from parrainage.app.rne import parse_elu
+    from parrainage.app.sources.rne import parse_elu
 
     elu = parse_elu(row_rne)
     assert elu.first_name == "Daniel"
@@ -80,7 +80,8 @@ def test_csv(row_annuaire):
 
 @pytest.mark.django_db
 def test_met_a_jour_coordonnees_elus(row_rne, row_annuaire):
-    from parrainage.app.rne import parse_elu, met_a_jour_coordonnees_elus
+    from parrainage.app.sources.rne import parse_elu
+    from parrainage.app.sources.annuaire import met_a_jour_coordonnees_elus
 
     elu = parse_elu(row_rne)
     assert elu.public_email == ""

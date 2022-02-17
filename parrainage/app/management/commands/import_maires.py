@@ -9,7 +9,8 @@ import csv
 from django.core.management.base import BaseCommand
 
 from parrainage.app.models import Elu
-from parrainage.app.rne import parse_elu, met_a_jour_coordonnees_elus
+from parrainage.app.sources.rne import parse_elu
+from parrainage.app.sources.annuaire import met_a_jour_coordonnees_elus
 
 class Command(BaseCommand):
     help = 'Importer les données sur les maires et les mairies'
