@@ -1,4 +1,10 @@
+import csv
+
 from parrainage.app.models import Elu
+
+
+def read_csv(iterable):
+    return csv.DictReader(iterable, delimiter=",")
 
 
 def met_a_jour_coordonnees_elus(row_annuaire):

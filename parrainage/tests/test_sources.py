@@ -1,5 +1,4 @@
 from datetime import date
-import csv
 
 import pytest
 
@@ -61,7 +60,9 @@ codeInsee,CodePostal,NomOrganisme,NomCommune,Email,Téléphone,Url,Adresse,Latit
 
 @pytest.fixture
 def row_annuaire():
-    reader = csv.DictReader(CSV_ANNUAIRE.splitlines(), delimiter=",")
+    from parrainage.app.sources.annuaire import read_csv
+
+    reader = read_csv(CSV_ANNUAIRE.splitlines())
     return list(reader)[0]
 
 

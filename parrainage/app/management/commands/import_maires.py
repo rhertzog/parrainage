@@ -4,13 +4,12 @@
 # the top-level directory of this distribution.
 
 import argparse
-import csv
 
 from django.core.management.base import BaseCommand
 
 from parrainage.app.models import Elu
 from parrainage.app.sources.rne import read_tsv, parse_elu
-from parrainage.app.sources.annuaire import met_a_jour_coordonnees_elus
+from parrainage.app.sources.annuaire import read_csv, met_a_jour_coordonnees_elus
 
 
 class Command(BaseCommand):
@@ -29,6 +28,6 @@ class Command(BaseCommand):
             elus.append(elu)
         Elu.objects.bulk_create(elus)
 
-        csv_mairies = csv.DictReader(kwargs['mairies'], delimiter=",")
+        csv_mairies = read_csv(kwargs['mairies'])
         for row in csv_mairies:
             met_a_jour_coordonnees_elus(row)
