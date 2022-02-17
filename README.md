@@ -1,10 +1,19 @@
-# Installation locale
+# Outil de suivi des parrainages
 
-## Pré-requis
+## Sources de données
+
+- [Répertoire national des élus](https://www.data.gouv.fr/fr/datasets/repertoire-national-des-elus-1/)
+- [Annuaire de l’administration](https://www.data.gouv.fr/fr/datasets/service-public-fr-annuaire-de-l-administration-base-de-donnees-locales/)
+
+
+## Installation locale
+
+### Pré-requis
 
 - Python 3.7.x
 
-## Installer
+
+### Installer
 
 Créer un virtualenv :
 ```
@@ -18,7 +27,7 @@ pip install -r requirements.txt -r requirements-dev.txt
 ```
 
 
-## Configurer la base de données
+### Configurer la base de données
 
 Par défaut, l’application utilisera une base de données SQLite (dans `parrainage/db.sqlite3`).
 
@@ -28,9 +37,9 @@ python manage.py migrate
 ```
 
 
-## Charger les données
+### Charger les données
 
-### Liste des maires
+#### Liste des maires
 
 - Récupérer `rne-maires.csv` depuis https://www.data.gouv.fr/fr/datasets/repertoire-national-des-elus-1/
 
@@ -41,27 +50,33 @@ python manage.py migrate
 python manage.py import_maires rne-maires.csv mairies.csv
 ```
 
-### Liste des autres élus locaux
+#### Liste des autres élus locaux
 
 TODO
 
 
-## Créer un super-utilisateur
+### Créer un super-utilisateur
 
 ```
 python manage.py createsuperuser
 ```
 
 
-## Lancer un serveur local
+### Lancer un serveur local
 
 ```
 python manage.py runserver
 ```
 
 
-## Lancer les tests
+### Lancer les tests
 
 ```
 pytest
+```
+
+ou, pour les lancer en continu :
+
+```
+ptw
 ```
