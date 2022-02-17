@@ -9,7 +9,7 @@ import csv
 from django.core.management.base import BaseCommand
 
 from parrainage.app.models import Elu
-from parrainage.app.sources.rne import parse_elu
+from parrainage.app.sources.rne import read_tsv, parse_elu
 from parrainage.app.sources.annuaire import met_a_jour_coordonnees_elus
 
 
@@ -23,9 +23,8 @@ class Command(BaseCommand):
                             type=argparse.FileType(mode='r', encoding='utf-8'))
 
     def handle(self, *args, **kwargs):
-        tsv_maires = csv.DictReader(kwargs['maires'], delimiter="\t")
         elus = []
-        for row in tsv_maires:
+        for row in read_tsv(kwargs['maires']):
             elu = parse_elu(row, role="M")
             elus.append(elu)
         Elu.objects.bulk_create(elus)

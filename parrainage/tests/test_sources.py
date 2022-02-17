@@ -12,7 +12,9 @@ Code du département	Libellé du département	Code de la collectivité à statut
 
 @pytest.fixture
 def row_rne_maires():
-    reader = csv.DictReader(TSV_RNE_MAIRES.splitlines(), delimiter="\t")
+    from parrainage.app.sources.rne import read_tsv
+
+    reader = read_tsv(TSV_RNE_MAIRES.splitlines())
     return list(reader)[0]
 
 

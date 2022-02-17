@@ -1,6 +1,11 @@
 from datetime import datetime
+import csv
 
 from parrainage.app.models import Elu
+
+
+def read_tsv(iterable):
+    return csv.DictReader(iterable, delimiter="\t")
 
 
 def parse_elu(row, role):
