@@ -4,20 +4,20 @@ import csv
 import pytest
 
 
-TSV_RNE = """\
+TSV_RNE_MAIRES = """\
 Code du département	Libellé du département	Code de la collectivité à statut particulier	Libellé de la collectivité à statut particulier	Code de la commune	Libellé de la commune	Nom de l'élu	Prénom de l'élu	Code sexe	Date de naissance	Code de la catégorie socio-professionnelle	Libellé de la catégorie socio-professionnelle	Date de début du mandat	Date de début de la fonction
 01	Ain			01001	L'Abergement-Clémenciat	BOULON	Daniel	M	04/03/1951	74	Ancien cadre	18/05/2020	26/05/2020
 """
 
 
 @pytest.fixture
-def row_rne():
-    reader = csv.DictReader(TSV_RNE.splitlines(), delimiter="\t")
+def row_rne_maires():
+    reader = csv.DictReader(TSV_RNE_MAIRES.splitlines(), delimiter="\t")
     return list(reader)[0]
 
 
-def test_tsv_rne(row_rne):
-    assert row_rne == {
+def test_tsv_rne_maires(row_rne_maires):
+    assert row_rne_maires == {
         "Code de la catégorie socio-professionnelle": "74",
         "Code de la collectivité à statut particulier": "",
         "Code de la commune": "01001",
@@ -35,19 +35,20 @@ def test_tsv_rne(row_rne):
     }
 
 
-def test_parse_elu(row_rne):
-    from parrainage.app.sources.rne import parse_elu
+class TestParseElu:
+    def test_parse_maire(self, row_rne_maires):
+        from parrainage.app.sources.rne import parse_elu
 
-    elu = parse_elu(row_rne, role="M")
-    assert elu.first_name == "Daniel"
-    assert elu.family_name == "BOULON"
-    assert elu.gender == "H"
-    assert elu.birthdate == date(1951, 3, 4)
-    assert elu.role == "M"  # maire
-    assert elu.comment == "Catégorie socio-professionnelle: Ancien cadre"
-    assert elu.department == "01"
-    assert elu.city == "L'Abergement-Clémenciat"
-    assert elu.city_code == "01001"
+        elu = parse_elu(row_rne_maires, role="M")
+        assert elu.first_name == "Daniel"
+        assert elu.family_name == "BOULON"
+        assert elu.gender == "H"
+        assert elu.birthdate == date(1951, 3, 4)
+        assert elu.role == "M"  # maire
+        assert elu.comment == "Catégorie socio-professionnelle: Ancien cadre"
+        assert elu.department == "01"
+        assert elu.city == "L'Abergement-Clémenciat"
+        assert elu.city_code == "01001"
 
 
 CSV_ANNUAIRE = """\
@@ -79,11 +80,11 @@ def test_csv(row_annuaire):
 
 
 @pytest.mark.django_db
-def test_met_a_jour_coordonnees_elus(row_rne, row_annuaire):
+def test_met_a_jour_coordonnees_elus(row_rne_maires, row_annuaire):
     from parrainage.app.sources.rne import parse_elu
     from parrainage.app.sources.annuaire import met_a_jour_coordonnees_elus
 
-    elu = parse_elu(row_rne, role="M")
+    elu = parse_elu(row_rne_maires, role="M")
     assert elu.public_email == ""
     assert elu.public_phone == ""
     assert elu.public_website == ""
