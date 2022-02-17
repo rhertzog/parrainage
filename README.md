@@ -2,13 +2,13 @@
 
 ## Pré-requis
 
-- Python 3.5.x (à tester avec des versions plus récentes)
+- Python 3.7.x
 
 ## Installer
 
 Créer un virtualenv :
 ```
-python3.5 -m venv venv
+python3.7 -m venv venv
 source venv/bin/activate
 ```
 

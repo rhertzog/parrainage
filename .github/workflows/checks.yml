@@ -15,10 +15,10 @@ jobs:
           sudo apt-get install locales-all
           sudo localectl set-locale LANG=fr_FR.utf8
 
-      - name: Installation de Python 3.5
+      - name: Installation de Python 3.7
         uses: actions/setup-python@v2
         with:
-          python-version: 3.5
+          python-version: 3.7
 
       - name: Installation des dépendances Python
         run: |
