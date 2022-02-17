@@ -12,6 +12,7 @@ from parrainage.app.models import Elu
 from parrainage.app.sources.rne import parse_elu
 from parrainage.app.sources.annuaire import met_a_jour_coordonnees_elus
 
+
 class Command(BaseCommand):
     help = 'Importer les données sur les maires et les mairies'
 
@@ -25,7 +26,7 @@ class Command(BaseCommand):
         tsv_maires = csv.DictReader(kwargs['maires'], delimiter="\t")
         elus = []
         for row in tsv_maires:
-            elu = parse_elu(row)
+            elu = parse_elu(row, role="M")
             elus.append(elu)
         Elu.objects.bulk_create(elus)
 

@@ -3,7 +3,7 @@ from datetime import datetime
 from parrainage.app.models import Elu
 
 
-def parse_elu(row):
+def parse_elu(row, role):
     """
     Crée un élu à partir d'une ligne d’un fichier du Répertoire National des Élus
 
@@ -16,7 +16,7 @@ def parse_elu(row):
         family_name=row["Nom de l'élu"],
         gender=gender,
         birthdate=birthdate,
-        role="M",
+        role=role,
         comment="Catégorie socio-professionnelle: {}".format(
             row["Libellé de la catégorie socio-professionnelle"]
         ),

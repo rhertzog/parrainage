@@ -38,7 +38,7 @@ def test_tsv_rne(row_rne):
 def test_parse_elu(row_rne):
     from parrainage.app.sources.rne import parse_elu
 
-    elu = parse_elu(row_rne)
+    elu = parse_elu(row_rne, role="M")
     assert elu.first_name == "Daniel"
     assert elu.family_name == "BOULON"
     assert elu.gender == "H"
@@ -83,7 +83,7 @@ def test_met_a_jour_coordonnees_elus(row_rne, row_annuaire):
     from parrainage.app.sources.rne import parse_elu
     from parrainage.app.sources.annuaire import met_a_jour_coordonnees_elus
 
-    elu = parse_elu(row_rne)
+    elu = parse_elu(row_rne, role="M")
     assert elu.public_email == ""
     assert elu.public_phone == ""
     assert elu.public_website == ""
