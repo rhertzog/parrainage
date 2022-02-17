@@ -50,9 +50,32 @@ python manage.py migrate
 python manage.py import_maires rne-maires.csv mairies.csv
 ```
 
-#### Liste des autres élus locaux
+#### Liste des conseillers départementaux
 
-TODO
+- Récupérer `rne-cd.csv` depuis https://www.data.gouv.fr/fr/datasets/repertoire-national-des-elus-1/
+
+- Lancer la commande (ça peut être long...) :
+```
+python manage.py import_elus --mandat=CD rne-cd.csv
+```
+
+#### Liste des conseillers régionaux
+
+- Récupérer `rne-cr.csv` depuis https://www.data.gouv.fr/fr/datasets/repertoire-national-des-elus-1/
+
+- Lancer la commande :
+```
+python manage.py import_elus --mandat=CR rne-cr.csv
+```
+
+#### Liste des sénateurs
+
+- Récupérer `rne-sen.csv` depuis https://www.data.gouv.fr/fr/datasets/repertoire-national-des-elus-1/
+
+- Lancer la commande :
+```
+python manage.py import_elus --mandat=S rne-sen.csv
+```
 
 
 ### Créer un super-utilisateur

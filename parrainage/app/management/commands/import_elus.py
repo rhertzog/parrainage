@@ -4,66 +4,60 @@
 # the top-level directory of this distribution.
 
 import argparse
-from datetime import datetime
-import csv
 import logging
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from parrainage.app.models import Elu
+from parrainage.app.sources.rne import read_tsv, parse_elu
+
+
+MANDAT = {
+    "CD": "Conseiller départemental",
+    "CR": "Conseiller régional",
+    "S": "Sénateur",
+}
 
 class Command(BaseCommand):
-    help = 'Import a CSV file with data about mayors'
+    help = "Importer les données du RNE sur des élus (hors maires)"
 
     def add_arguments(self, parser):
-        parser.add_argument('csvfile', help='Path of the CSV file',
-                            type=argparse.FileType(mode='r', encoding='utf-8'))
+        parser.add_argument(
+            "csvfile",
+            help="fichier rne-xxx.csv du RNE",
+            type=argparse.FileType(mode="r", encoding="utf-8"),
+        )
+        parser.add_argument(
+            "--mandat", help="Type de mandat", choices=["CD", "CR", "S"], required=True
+        )
 
     @transaction.atomic
     def handle(self, *args, **kwargs):
-        csvfile = csv.DictReader(kwargs['csvfile'])
-        elus = []
-        civilite_mapping = {
-            'M': 'H',
-            'F': 'F',
-            'H': 'H',
-            'M.': 'H',
-            'Mme': 'F',
-            'Mlle': 'F',
-        }
-        for row in csvfile:
-            gender = civilite_mapping.get(row['Civilité'], '')
-            birthdate = datetime.strptime(row['DateNaissance'],
-                                          '%Y-%m-%d').date()
+        nouveaux_elus = []
+        nb_elus_mis_a_jour = 0
+        for row in read_tsv(kwargs["csvfile"]):
+            elu = parse_elu(row, role=kwargs["mandat"])
             try:
-                elu = Elu.objects.get(
-                    first_name=row['PrénomÉlu'],
-                    family_name=row['NomÉlu'],
-                    birthdate=birthdate,
+                elu_existant = Elu.objects.get(
+                    first_name=elu.first_name,
+                    family_name=elu.family_name,
+                    birthdate=elu.birthdate,
                 )
-                if elu.role == row['Role']:
+                if elu_existant.role == elu.role:
                     continue
-                if row['Role'] == 'CD':
-                    comment = 'Autre mandat: Conseiller départemental'
-                elif row['Role'] == 'CR':
-                    comment = 'Autre mandat: Conseiller régional'
-                elif row['Role'] == 'S':
-                    comment = 'Autre mandat: Sénateur'
-                elu.comment = '{}\n{}'.format(comment, elu.comment)
-                elu.save()
+                else:
+                    annotation = "\nAutre mandat: {MANDAT[elu.role]}"
+                    if annotation not in elu_existant.comment:
+                        elu_existant.comment += annotation
+                        elu_existant.save()
+                        nb_elus_mis_a_jour += 1
             except Elu.DoesNotExist:
-                elu = Elu(
-                    first_name=row['PrénomÉlu'],
-                    family_name=row['NomÉlu'],
-                    gender=gender,
-                    birthdate=birthdate,
-                    role=row['Role'],
-                    department=row['CodeDépartement'],
-                    nuance_politique=row['CodeNuancePolitique'],
-                )
-                elus.append(elu)
+                nouveaux_elus.append(elu)
             except Elu.MultipleObjectsReturned:
-                logging.error('Multiple {} {} born on {}'.format(
-                    row['PrénomÉlu'], row['NomÉlu'], birthdate))
-        Elu.objects.bulk_create(elus)
+                logging.error(
+                    "Il y a plusieurs %s %s né(e)s le %s",
+                    elu.first_name, elu.family_name, elu.birthdate
+                )
+        Elu.objects.bulk_create(nouveaux_elus)
+        print(f"Ajouté {len(nouveaux_elus)} élus et mis à jour {nb_elus_mis_a_jour} élus existants.")

@@ -25,9 +25,9 @@ def parse_elu(row, role):
         comment="Catégorie socio-professionnelle: {}".format(
             row["Libellé de la catégorie socio-professionnelle"]
         ),
-        department=row["Code du département"],
-        city=row["Libellé de la commune"],
+        department=row.get("Code du département", ""),
+        city=row.get("Libellé de la commune", ""),
         # city_size=int(row["Population"]),
-        city_code=row["Code de la commune"],
+        city_code=row.get("Code de la commune", ""),
         # nuance_politique=row["CodeNuancePolitique"],
     )
