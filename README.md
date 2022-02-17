@@ -38,7 +38,7 @@ python manage.py migrate
 
 - Lancer la commande (ça peut être long...) :
 ```
-python manage.py import_maires rne-maires.csv
+python manage.py import_maires rne-maires.csv mairies.csv
 ```
 
 ### Liste des autres élus locaux
