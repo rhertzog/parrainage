@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 if elu_existant.role == elu.role:
                     continue
                 else:
-                    annotation = "\nAutre mandat: {MANDAT[elu.role]}"
+                    annotation = f"\nAutre mandat: {MANDAT[elu.role]}"
                     if annotation not in elu_existant.comment:
                         elu_existant.comment += annotation
                         elu_existant.save()
