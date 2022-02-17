@@ -1,3 +1,4 @@
 Django>=1.11,<2.0
 dj-database-url
 dj-static
+psycopg2-binary
