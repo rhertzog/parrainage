@@ -4,5 +4,7 @@
 #
 #    pip-compile requirements.in
 #
-django==1.10.8
+django==1.11.29
     # via -r requirements.in
+pytz==2021.3
+    # via django
