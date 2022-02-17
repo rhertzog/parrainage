@@ -1,5 +1,7 @@
+-c requirements.txt
 pip-tools
 pytest<5
 pytest-django<5
 pytest-watch
+watchdog>=2
 tabview
