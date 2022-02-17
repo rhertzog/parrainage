@@ -41,7 +41,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='note',
             name='elu',
-            field=models.ForeignKey(to='app.Elu', related_name='notes'),
+            field=models.ForeignKey(to='app.Elu', related_name='notes', on_delete=models.CASCADE),
         ),
         migrations.AlterField(
             model_name='note',

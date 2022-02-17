@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('phone', models.CharField(max_length=255, blank=True)),
                 ('city', models.CharField(max_length=255, blank=True)),
                 ('department', models.CharField(db_index=True, max_length=3, blank=True)),
-                ('user', models.OneToOneField(related_name='settings', to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(related_name='settings', to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)),
             ],
         ),
     ]
