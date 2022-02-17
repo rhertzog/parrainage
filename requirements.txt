@@ -6,7 +6,11 @@
 #
 dj-database-url==0.5.0
     # via -r requirements.in
+dj-static==0.0.6
+    # via -r requirements.in
 django==1.11.29
     # via -r requirements.in
 pytz==2021.3
     # via django
+static3==0.7.0
+    # via dj-static
